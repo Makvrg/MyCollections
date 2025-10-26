@@ -10,8 +10,17 @@ import java.util.List;
 
 public class MyLinkedListTest {
 
+    @SafeVarargs
+    private static <T> void assertListContent(MyList<T> list, T... expected) {
+        Assertions.assertEquals(expected.length, list.length());
+        for (int i = 0; i < expected.length; i++) {
+            Assertions.assertEquals(expected[i], list.get(i));
+        }
+    }
+
+
     @ParameterizedTest
-    @CsvFileSource(resources = "/dataStringForLinked.csv")
+    @CsvFileSource(resources = "/StringData.csv")
     void get(String el1, String el2, String el3,
              String el4, String el5, String el6) {
         MyList<String> myLinkedList = new MyLinkedList<>(
@@ -27,13 +36,6 @@ public class MyLinkedListTest {
         );
     }
 
-    @SafeVarargs
-    private static <T> void assertListContent(MyList<T> list, T... expected) {
-        Assertions.assertEquals(expected.length, list.length());
-        for (int i = 0; i < expected.length; i++) {
-            Assertions.assertEquals(expected[i], list.get(i));
-        }
-    }
 
     @Test
     void addToEndBigList() {
@@ -77,14 +79,20 @@ public class MyLinkedListTest {
 
     @Test
     void addToEndEmptyList() {
-        MyList<Integer> emptyList = new MyLinkedList<>();
-        assertListContent(emptyList);
+        MyList<Integer> emptyList1 = new MyLinkedList<>();
+        MyList<Integer> emptyList2 = new MyLinkedList<>(List.of());
+        assertListContent(emptyList1);
+        assertListContent(emptyList2);
 
-        emptyList.add(-9999);
-        assertListContent(emptyList, -9999);
+        emptyList1.add(-9999);
+        emptyList2.add(-9999);
+        assertListContent(emptyList1, -9999);
+        assertListContent(emptyList2, -9999);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> emptyList.get(1));
+                () -> emptyList1.get(1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> emptyList2.get(1));
     }
 
 

@@ -11,450 +11,384 @@ import java.util.List;
 public class MyArrayListTest {
 
     @ParameterizedTest
-    @CsvFileSource(resources = "/dataStringForArray.csv")
-    void get(String el1, String el2, String el3, String el4, String el5, String el6) {
-        MyList<String> myArrayList = new MyArrayList<>(List.of(el1, el2, el3, el4, el5, el6));
-        Assertions.assertEquals("ceo", myArrayList.get(3));
+    @CsvFileSource(resources = "/StringData.csv")
+    void get(String el1, String el2, String el3,
+             String el4, String el5, String el6) {
+        MyList<String> myArrayList = new MyArrayList<>(
+                List.of(el1, el2, el3, el4, el5, el6)
+        );
+        Assertions.assertEquals("ceo0", myArrayList.get(1));
+        Assertions.assertEquals("ceo1", myArrayList.get(2));
+        Assertions.assertEquals("ceo2", myArrayList.get(3));
+        Assertions.assertEquals("ceo3", myArrayList.get(4));
         Assertions.assertThrows(
                 IndexOutOfBoundsException.class,
                 () -> myArrayList.get(6)
         );
     }
 
+
+    @SafeVarargs
+    private static <T> void assertListContent(MyList<T> list, T... expected) {
+        Assertions.assertEquals(expected.length, list.length());
+        for (int i = 0; i < expected.length; i++) {
+            Assertions.assertEquals(expected[i], list.get(i));
+        }
+    }
+
+
     @Test
-    void addToEnd() {
-        MyList<Integer> bigMyArrayList = new MyArrayList<>(List.of(-1, 1, 2, 3, 4, 5), 0);
-        MyList<Integer> mediumMyArrayList = new MyArrayList<>(List.of(-1, 1), 0);
-        MyList<Integer> smallMyArrayList = new MyArrayList<>(List.of(-1), 20);
-        MyList<Integer> nanoMyArrayList = new MyArrayList<>(List.of());
-        MyList<Integer> nanoMyArrayList1 = new MyArrayList<>();
-        MyList<Integer> myArrayList = new MyArrayList<>(1);
+    void addToEndBigList() {
+        MyList<Integer> bigList = new MyArrayList<>(List.of(-1, 1, 2, 3, 4, 5), 1);
+        Assertions.assertEquals(6, bigList.length());
 
-        Assertions.assertEquals(6, bigMyArrayList.length());
-        bigMyArrayList.add(-9999);
-        Assertions.assertEquals(7, bigMyArrayList.length());
-        Assertions.assertEquals(-9999, bigMyArrayList.get(6));
-        Assertions.assertEquals(-1, bigMyArrayList.get(0));
-        Assertions.assertEquals(2, bigMyArrayList.get(2));
-        Assertions.assertEquals(5, bigMyArrayList.get(5));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.get(7)
-        );
+        bigList.add(-9999);
+        assertListContent(bigList, -1, 1, 2, 3, 4, 5, -9999);
 
-        Assertions.assertEquals(2, mediumMyArrayList.length());
-        mediumMyArrayList.add(-9999);
-        Assertions.assertEquals(3, mediumMyArrayList.length());
-        Assertions.assertEquals(-9999, mediumMyArrayList.get(2));
-        Assertions.assertEquals(-1, mediumMyArrayList.get(0));
-        Assertions.assertEquals(1, mediumMyArrayList.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> mediumMyArrayList.get(-1)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> mediumMyArrayList.get(3)
-        );
-
-        Assertions.assertEquals(1, smallMyArrayList.length());
-        smallMyArrayList.add(-9999);
-        Assertions.assertEquals(2, smallMyArrayList.length());
-        Assertions.assertEquals(-9999, smallMyArrayList.get(1));
-        Assertions.assertEquals(-1, smallMyArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.get(7)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.get(2)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.get(5000/9)
-        );
-
-        Assertions.assertEquals(0, nanoMyArrayList.length());
-        nanoMyArrayList.add(-9999);
-        Assertions.assertEquals(1, nanoMyArrayList.length());
-        Assertions.assertEquals(-9999, nanoMyArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyArrayList.get(1)
-        );
-
-        Assertions.assertEquals(0, nanoMyArrayList1.length());
-        nanoMyArrayList1.add(-9999);
-        Assertions.assertEquals(1, nanoMyArrayList1.length());
-        Assertions.assertEquals(-9999, nanoMyArrayList1.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyArrayList1.get(1)
-        );
-
-        Assertions.assertEquals(0, myArrayList.length());
-        myArrayList.add(-9999);
-        Assertions.assertEquals(1, myArrayList.length());
-        Assertions.assertEquals(-9999, myArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> myArrayList.get(1)
-        );
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> bigList.get(7));
     }
 
     @Test
-    void addToIndex() {
-        MyList<Integer> bigMyArrayList = new MyArrayList<>(List.of(-1, 1, 2, 3, 4, 5), 0);
-        MyList<Integer> mediumMyArrayList = new MyArrayList<>(List.of(-1, 1), 0);
-        MyList<Integer> smallMyArrayList = new MyArrayList<>(List.of(-1), 20);
-        MyList<Integer> nanoMyArrayList = new MyArrayList<>(List.of());
-        MyList<Integer> nanoMyArrayList1 = new MyArrayList<>();
-        MyList<Integer> myArrayList = new MyArrayList<>(1);
+    void addToEndMediumList() {
+        MyList<Integer> mediumList = new MyArrayList<>(List.of(-1, 1), 0);
+        Assertions.assertEquals(2, mediumList.length());
 
-        Assertions.assertEquals(6, bigMyArrayList.length());
-        bigMyArrayList.add(2, -9999);
-        Assertions.assertEquals(7, bigMyArrayList.length());
-        Assertions.assertEquals(5, bigMyArrayList.get(6));
-        Assertions.assertEquals(-1, bigMyArrayList.get(0));
-        Assertions.assertEquals(-9999, bigMyArrayList.get(2));
-        Assertions.assertEquals(1, bigMyArrayList.get(1));
-        Assertions.assertEquals(2, bigMyArrayList.get(3));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.get(7)
-        );
+        mediumList.add(-9999);
+        assertListContent(mediumList, -1, 1, -9999);
 
-        Assertions.assertEquals(2, mediumMyArrayList.length());
-        mediumMyArrayList.add(0, -9999);
-        Assertions.assertEquals(3, mediumMyArrayList.length());
-        Assertions.assertEquals(1, mediumMyArrayList.get(2));
-        Assertions.assertEquals(-9999, mediumMyArrayList.get(0));
-        Assertions.assertEquals(-1, mediumMyArrayList.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> mediumMyArrayList.get(-1)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> mediumMyArrayList.get(3)
-        );
-
-        Assertions.assertEquals(1, smallMyArrayList.length());
-        smallMyArrayList.add(1, -9999);
-        Assertions.assertEquals(2, smallMyArrayList.length());
-        Assertions.assertEquals(-9999, smallMyArrayList.get(1));
-        Assertions.assertEquals(-1, smallMyArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.add(3, 0)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.get(7)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.get(2)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.get(5000/9)
-        );
-
-        Assertions.assertEquals(0, nanoMyArrayList.length());
-        nanoMyArrayList.add(0, -9999);
-        Assertions.assertEquals(1, nanoMyArrayList.length());
-        Assertions.assertEquals(-9999, nanoMyArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyArrayList.add(2, 0)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyArrayList.get(1)
-        );
-
-        Assertions.assertEquals(0, nanoMyArrayList1.length());
-        nanoMyArrayList1.add(0, -9999);
-        nanoMyArrayList1.add(1, -1111);
-        Assertions.assertEquals(2, nanoMyArrayList1.length());
-        Assertions.assertEquals(-9999, nanoMyArrayList1.get(0));
-        Assertions.assertEquals(-1111, nanoMyArrayList1.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyArrayList1.get(2)
-        );
-
-        Assertions.assertEquals(0, myArrayList.length());
-        myArrayList.add(0, -9999);
-        Assertions.assertEquals(1, myArrayList.length());
-        Assertions.assertEquals(-9999, myArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> myArrayList.get(1)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> myArrayList.add(2, 0)
-        );
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> mediumList.get(-1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> mediumList.get(3));
     }
 
     @Test
-    void remove() {
-        MyList<Integer> bigMyArrayList = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
+    void addToEndSmallList() {
+        MyList<Integer> smallList = new MyArrayList<>(List.of(-1), 20);
+        Assertions.assertEquals(1, smallList.length());
 
-        Assertions.assertEquals(6, bigMyArrayList.length());
-        Assertions.assertEquals(2, bigMyArrayList.remove(2));
-        // bigMyArrayList = [0, 1, 3, 4, 5]
-        Assertions.assertEquals(5, bigMyArrayList.length());
-        Assertions.assertEquals(3, bigMyArrayList.get(2));
-        Assertions.assertEquals(1, bigMyArrayList.get(1));
-        Assertions.assertEquals(0, bigMyArrayList.get(0));
-        Assertions.assertEquals(5, bigMyArrayList.get(4));
-        Assertions.assertEquals(4, bigMyArrayList.get(3));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.remove(5)
-        );
+        smallList.add(-9999);
+        assertListContent(smallList, -1, -9999);
 
-        Assertions.assertEquals(0, bigMyArrayList.remove(0));
-        // bigMyArrayList = [1, 3, 4, 5]
-        Assertions.assertEquals(4, bigMyArrayList.length());
-        Assertions.assertEquals(1, bigMyArrayList.get(0));
-        Assertions.assertEquals(3, bigMyArrayList.get(1));
-        Assertions.assertEquals(4, bigMyArrayList.get(2));
-        Assertions.assertEquals(5, bigMyArrayList.get(3));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.get(4)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.remove(4)
-        );
-
-        Assertions.assertEquals(1, bigMyArrayList.remove(0));
-        Assertions.assertEquals(5, bigMyArrayList.remove(2));
-        // bigMyArrayList = [3, 4]
-        Assertions.assertEquals(2, bigMyArrayList.length());
-        Assertions.assertEquals(3, bigMyArrayList.get(0));
-        Assertions.assertEquals(4, bigMyArrayList.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.get(2)
-        );
-
-        Assertions.assertEquals(4, bigMyArrayList.remove(1));
-        Assertions.assertEquals(3, bigMyArrayList.remove(0));
-        // bigMyArrayList = []
-        Assertions.assertEquals(0, bigMyArrayList.length());
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.get(0)
-        );
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(7));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(2));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(5000 / 9));
     }
 
     @Test
-    void set() {
-        MyList<Integer> bigMyArrayList = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
-        MyList<String> smallMyArrayList = new MyArrayList<>(List.of("Hello"));
+    void addToEndEmptyLists() {
+        List<MyList<Integer>> listWithArrayLists = List.of(
+                new MyArrayList<>(), new MyArrayList<>(List.of()),
+                new MyArrayList<>(25)
+        );
+        for (MyList<Integer> list : listWithArrayLists) {
+            Assertions.assertEquals(0, list.length());
+            list.add(-9999);
+            assertListContent(list, -9999);
+            Assertions.assertThrows(IndexOutOfBoundsException.class,
+                    () -> list.get(1));
+        }
+    }
 
-        Assertions.assertEquals(6, bigMyArrayList.length());
-        bigMyArrayList.set(0, 777);
-        bigMyArrayList.set(5, -99);
-        bigMyArrayList.set(2, 777);
-        // bigMyArrayList = [777, 1, 777, 3, 4, -99]
-        Assertions.assertEquals(6, bigMyArrayList.length());
-        Assertions.assertEquals(777, bigMyArrayList.get(0));
-        Assertions.assertEquals(1, bigMyArrayList.get(1));
-        Assertions.assertEquals(777, bigMyArrayList.get(2));
-        Assertions.assertEquals(3, bigMyArrayList.get(3));
-        Assertions.assertEquals(4, bigMyArrayList.get(4));
-        Assertions.assertEquals(-99, bigMyArrayList.get(5));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.set(6, 111)
-        );
 
-        Assertions.assertEquals(1, smallMyArrayList.length());
-        smallMyArrayList.set(0, "aaa");
-        // smallMyArrayList = ["aaa"]
-        Assertions.assertEquals(1, smallMyArrayList.length());
-        Assertions.assertEquals("aaa", smallMyArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.set(1, "aaa")
-        );
-        Assertions.assertEquals("aaa", smallMyArrayList.remove(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.set(0, "aaa")
-        );
+    @Test
+    void addToIndexBigList() {
+        MyList<Integer> bigList = new MyArrayList<>(List.of(-1, 1, 2, 3, 4, 5), 0);
+        Assertions.assertEquals(6, bigList.length());
+
+        bigList.add(2, -9999); // [-1, 1, -9999, 2, 3, 4, 5]
+        assertListContent(bigList, -1, 1, -9999, 2, 3, 4, 5);
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> bigList.get(7));
     }
 
     @Test
-    void addAll() {
-        MyList<Integer> bigMyArrayList = new MyArrayList<>();
-        MyList<Integer> smallMyArrayList = new MyArrayList<>();
-        MyList<Integer> nanoMyArrayList = new MyArrayList<>();
+    void addToIndexMediumList() {
+        MyList<Integer> mediumList = new MyArrayList<>(List.of(-1, 1), 0);
+        Assertions.assertEquals(2, mediumList.length());
 
-        bigMyArrayList.addAll(List.of(0, 1, 2, 3));
-        smallMyArrayList.addAll(List.of(0));
-        nanoMyArrayList.addAll(List.of());
+        mediumList.add(0, -9999);
+        assertListContent(mediumList, -9999, -1, 1);
 
-        Assertions.assertEquals(4, bigMyArrayList.length());
-        Assertions.assertEquals(1, smallMyArrayList.length());
-        Assertions.assertEquals(0, nanoMyArrayList.length());
-
-        Assertions.assertEquals(0, bigMyArrayList.get(0));
-        Assertions.assertEquals(1, bigMyArrayList.get(1));
-        Assertions.assertEquals(2, bigMyArrayList.get(2));
-        Assertions.assertEquals(3, bigMyArrayList.get(3));
-
-        Assertions.assertEquals(0, smallMyArrayList.get(0));
-        smallMyArrayList.add(999);
-        Assertions.assertEquals(2, smallMyArrayList.length());
-        Assertions.assertEquals(999, smallMyArrayList.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.get(2)
-        );
-
-        Assertions.assertEquals(0, nanoMyArrayList.length());
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyArrayList.get(0)
-        );
-        nanoMyArrayList.add(0, 777);
-        Assertions.assertEquals(1, nanoMyArrayList.length());
-        Assertions.assertEquals(777, nanoMyArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyArrayList.get(1)
-        );
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> mediumList.get(-1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> mediumList.get(3));
     }
 
     @Test
-    void bubbleSort() {
-        MyList<Integer> bigMyArrayList = new MyArrayList<>();
-        MyList<Integer> smallMyArrayList = new MyArrayList<>();
-        MyList<Integer> nanoMyArrayList = new MyArrayList<>();
+    void addToIndexSmallList() {
+        MyList<Integer> smallList = new MyArrayList<>(List.of(-1), 20);
+        Assertions.assertEquals(1, smallList.length());
 
-        bigMyArrayList.addAll(List.of(1, 3, 0, 1, 2, 9, -1));
-        smallMyArrayList.addAll(List.of(9));
-        nanoMyArrayList.addAll(List.of());
+        smallList.add(1, -9999);
+        assertListContent(smallList, -1, -9999);
 
-        MyList.bubbleSort(bigMyArrayList);
-        // bigMyArrayList = [-1, 0, 1, 1, 2, 3, 9]
-        Assertions.assertEquals(7, bigMyArrayList.length());
-        Assertions.assertEquals(-1, bigMyArrayList.get(0));
-        Assertions.assertEquals(0, bigMyArrayList.get(1));
-        Assertions.assertEquals(1, bigMyArrayList.get(2));
-        Assertions.assertEquals(1, bigMyArrayList.get(3));
-        Assertions.assertEquals(2, bigMyArrayList.get(4));
-        Assertions.assertEquals(3, bigMyArrayList.get(5));
-        Assertions.assertEquals(9, bigMyArrayList.get(6));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.get(7)
-        );
-        MyList.bubbleSort(bigMyArrayList);
-        // bigMyArrayList = [-1, 0, 1, 1, 2, 3, 9]
-        Assertions.assertEquals(7, bigMyArrayList.length());
-        Assertions.assertEquals(-1, bigMyArrayList.get(0));
-        Assertions.assertEquals(0, bigMyArrayList.get(1));
-        Assertions.assertEquals(1, bigMyArrayList.get(2));
-        Assertions.assertEquals(1, bigMyArrayList.get(3));
-        Assertions.assertEquals(2, bigMyArrayList.get(4));
-        Assertions.assertEquals(3, bigMyArrayList.get(5));
-        Assertions.assertEquals(9, bigMyArrayList.get(6));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyArrayList.get(7)
-        );
-
-        MyList.bubbleSort(smallMyArrayList);
-        // smallMyArrayList = [9]
-        Assertions.assertEquals(1, smallMyArrayList.length());
-        Assertions.assertEquals(9, smallMyArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.get(1)
-        );
-        MyList.bubbleSort(smallMyArrayList);
-        // smallMyArrayList = [9]
-        Assertions.assertEquals(1, smallMyArrayList.length());
-        Assertions.assertEquals(9, smallMyArrayList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyArrayList.get(1)
-        );
-
-        MyList.bubbleSort(nanoMyArrayList);
-        // nanoMyArrayList = []
-        Assertions.assertEquals(0, nanoMyArrayList.length());
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyArrayList.get(0)
-        );
-        MyList.bubbleSort(nanoMyArrayList);
-        // nanoMyArrayList = []
-        Assertions.assertEquals(0, nanoMyArrayList.length());
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyArrayList.get(0)
-        );
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.add(3, 0));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(7));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(2));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(5000 / 9));
     }
 
     @Test
-    void forEach() {
-        MyList<Integer> bigMyArrayList = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
-        Integer[] bigArray = new Integer[5];
-
-        for (Integer i : bigMyArrayList) {
-            bigArray[i] = i;
+    void addToIndexEmptyLists() {
+        List<MyList<Integer>> listWithArrayLists = List.of(
+                new MyArrayList<>(), new MyArrayList<>(List.of()),
+                new MyArrayList<>(1)
+        );
+        for (MyList<Integer> list : listWithArrayLists) {
+            list.add(0, -9999);
+            list.add(1, -1111);
+            assertListContent(list, -9999, -1111);
+            Assertions.assertThrows(IndexOutOfBoundsException.class,
+                    () -> list.get(2));
+            Assertions.assertThrows(IndexOutOfBoundsException.class,
+                    () -> list.add(3, 0));
         }
-        Assertions.assertEquals(0, bigArray[0]);
-        Assertions.assertEquals(1, bigArray[1]);
-        Assertions.assertEquals(2, bigArray[2]);
-        Assertions.assertEquals(3, bigArray[3]);
-        Assertions.assertEquals(4, bigArray[4]);
-        for (Iterator<Integer> iterator = bigMyArrayList.iterator(); iterator.hasNext();) {
-            Integer el = iterator.next();
-            bigArray[el] = el;
+    }
+
+
+    @Test
+    void removeFromMiddle() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
+        Assertions.assertEquals(6, list.length());
+
+        int removed = list.remove(2); // [0, 1, 3, 4, 5]
+        Assertions.assertEquals(2, removed);
+        assertListContent(list, 0, 1, 3, 4, 5);
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.remove(5));
+    }
+
+    @Test
+    void removeFromStart() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
+        list.remove(2); // [0, 1, 3, 4, 5]
+        int removed = list.remove(0); // [1, 3, 4, 5]
+        Assertions.assertEquals(0, removed);
+        assertListContent(list, 1, 3, 4, 5);
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(4));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.remove(4));
+    }
+
+    @Test
+    void removeFromEnd() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
+        list.remove(list.length() - 1); // [0, 1, 2, 3, 4]
+        list.remove(list.length() - 1); // [0, 1, 2, 3]
+
+        int removedLast = list.remove(3); // [0, 1, 2]
+        Assertions.assertEquals(3, removedLast);
+        int removedFinal = list.remove(2); // [0, 1]
+        Assertions.assertEquals(2, removedFinal);
+
+        assertListContent(list, 0, 1);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(2));
+    }
+
+    @Test
+    void removeAllElements() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
+        list.remove(2); // [0, 1, 3, 4, 5]
+        list.remove(0); // [1, 3, 4, 5]
+        list.remove(2); // [1, 3, 5]
+        list.remove(2); // [1, 3]
+        list.remove(1); // [1]
+        list.remove(0); // []
+
+        Assertions.assertEquals(0, list.length());
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(0));
+    }
+
+
+    @Test
+    void setMultipleElements() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
+        Assertions.assertEquals(6, list.length());
+
+        list.set(0, 777);
+        list.set(5, -99);
+        list.set(2, 777);
+        // [777, 1, 777, 3, 4, -99]
+
+        assertListContent(list, 777, 1, 777, 3, 4, -99);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.set(6, 111));
+    }
+
+    @Test
+    void setSingleElement() {
+        MyList<String> list = new MyArrayList<>(List.of("Hello"));
+        Assertions.assertEquals(1, list.length());
+
+        list.set(0, "aaa");
+        assertListContent(list, "aaa");
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.set(1, "bbb"));
+    }
+
+    @Test
+    void setOnEmptyList() {
+        MyList<String> list = new MyArrayList<>();
+
+        Assertions.assertEquals(0, list.length());
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.set(0, "aaa"));
+    }
+
+
+    @Test
+    void addAllMultipleElements() {
+        MyList<Integer> list = new MyArrayList<>();
+        list.addAll(List.of(0, 1, 2, 3));
+
+        assertListContent(list, 0, 1, 2, 3);
+        Assertions.assertEquals(4, list.length());
+    }
+
+    @Test
+    void addAllSingleElement() {
+        MyList<Integer> list = new MyArrayList<>();
+        list.addAll(List.of(0));
+
+        assertListContent(list, 0);
+        Assertions.assertEquals(1, list.length());
+
+        list.add(999);
+        assertListContent(list, 0, 999);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(2));
+    }
+
+    @Test
+    void addAllEmptyList() {
+        MyList<Integer> list = new MyArrayList<>();
+        list.addAll(List.of());
+
+        assertListContent(list);
+        Assertions.assertEquals(0, list.length());
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(0));
+
+        list.add(0, 777);
+        assertListContent(list, 777);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(1));
+    }
+
+
+    @Test
+    void bubbleSortBigList() {
+        MyList<Integer> bigList = new MyArrayList<>();
+        bigList.addAll(List.of(1, 3, 0, 1, 2, 9, -1));
+
+        MyList.bubbleSort(bigList);
+        assertListContent(bigList, -1, 0, 1, 1, 2, 3, 9);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> bigList.get(7));
+
+        MyList.bubbleSort(bigList);
+        assertListContent(bigList, -1, 0, 1, 1, 2, 3, 9);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> bigList.get(7));
+    }
+
+    @Test
+    void bubbleSortSmallList() {
+        MyList<Integer> smallList = new MyArrayList<>();
+        smallList.addAll(List.of(9));
+
+        MyList.bubbleSort(smallList);
+        assertListContent(smallList, 9);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(1));
+
+        MyList.bubbleSort(smallList);
+        assertListContent(smallList, 9);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(1));
+    }
+
+    @Test
+    void bubbleSortEmptyList() {
+        MyList<Integer> emptyList = new MyArrayList<>();
+
+        MyList.bubbleSort(emptyList);
+        assertListContent(emptyList);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> emptyList.get(0));
+
+        MyList.bubbleSort(emptyList);
+        assertListContent(emptyList);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> emptyList.get(0));
+    }
+
+
+    @Test
+    void forEachBigList() {
+        MyList<Integer> bigList = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+        Integer[] result = new Integer[5];
+
+        for (Integer i : bigList) {
+            result[i] = i;
         }
-        Assertions.assertEquals(0, bigArray[0]);
-        Assertions.assertEquals(1, bigArray[1]);
-        Assertions.assertEquals(2, bigArray[2]);
-        Assertions.assertEquals(3, bigArray[3]);
-        Assertions.assertEquals(4, bigArray[4]);
+        Assertions.assertArrayEquals(new Integer[]{0, 1, 2, 3, 4}, result);
 
-
-        MyList<Integer> smallMyArrayList = new MyArrayList<>(List.of(0));
-        Integer[] smallArray = new Integer[1];
-
-        for (Integer i : smallMyArrayList) {
-            smallArray[i] = i;
+        for (Iterator<Integer> it = bigList.iterator(); it.hasNext(); ) {
+            Integer el = it.next();
+            result[el] = el;
         }
-        Assertions.assertEquals(0, smallArray[0]);
-        for (Iterator<Integer> iterator = smallMyArrayList.iterator(); iterator.hasNext();) {
-            Integer el = iterator.next();
-            smallArray[el] = el;
-        }
-        Assertions.assertEquals(0, smallArray[0]);
+        Assertions.assertArrayEquals(new Integer[]{0, 1, 2, 3, 4}, result);
+    }
 
+    @Test
+    void forEachSmallList() {
+        MyList<Integer> smallList = new MyArrayList<>(List.of(0));
+        Integer[] result = new Integer[1];
 
-        MyList<Integer> nanoMyArrayList = new MyArrayList<>();
-        Integer[] nanoArray = new Integer[0];
+        for (Integer i : smallList) {
+            result[i] = i;
+        }
+        Assertions.assertArrayEquals(new Integer[]{0}, result);
 
-        for (Integer i : nanoMyArrayList) {
-            nanoArray[i] = i;
+        for (Iterator<Integer> it = smallList.iterator(); it.hasNext(); ) {
+            Integer el = it.next();
+            result[el] = el;
         }
-        for (Iterator<Integer> iterator = nanoMyArrayList.iterator(); iterator.hasNext();) {
-            Integer el = iterator.next();
-            nanoArray[el] = el;
+        Assertions.assertArrayEquals(new Integer[]{0}, result);
+    }
+
+    @Test
+    void forEachEmptyList() {
+        MyList<Integer> emptyList = new MyArrayList<>();
+        Integer[] result = new Integer[0];
+
+        for (Integer el : emptyList) {
+            Assertions.fail("Цикл for-each не должен выполняться для пустого списка");
         }
+
+        for (Iterator<Integer> it = emptyList.iterator(); it.hasNext(); ) {
+            Assertions.fail("Итератор не должен иметь элементов в пустом списке");
+        }
+
+        Assertions.assertEquals(0, result.length);
     }
 
 }
