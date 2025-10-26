@@ -12,8 +12,11 @@ public class MyLinkedListTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = "/dataStringForLinked.csv")
-    void get(String el1, String el2, String el3, String el4, String el5, String el6) {
-        MyList<String> myLinkedList = new MyLinkedList<>(List.of(el1, el2, el3, el4, el5, el6));
+    void get(String el1, String el2, String el3,
+             String el4, String el5, String el6) {
+        MyList<String> myLinkedList = new MyLinkedList<>(
+                List.of(el1, el2, el3, el4, el5, el6)
+        );
         Assertions.assertEquals("ceo0", myLinkedList.get(1));
         Assertions.assertEquals("ceo1", myLinkedList.get(2));
         Assertions.assertEquals("ceo2", myLinkedList.get(3));
@@ -24,423 +27,359 @@ public class MyLinkedListTest {
         );
     }
 
-    @Test
-    void addToEnd() {
-        MyList<Integer> bigMyLinkedList = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
-        MyList<Integer> mediumMyLinkedList = new MyLinkedList<>(List.of(-1, 1));
-        MyList<Integer> smallMyLinkedList = new MyLinkedList<>(List.of(-1));
-        MyList<Integer> nanoMyLinkedList = new MyLinkedList<>(List.of());
-        MyList<Integer> nanoNanoMyLinkedList = new MyLinkedList<>();
-
-        Assertions.assertEquals(6, bigMyLinkedList.length());
-        bigMyLinkedList.add(-9999);
-        Assertions.assertEquals(7, bigMyLinkedList.length());
-        Assertions.assertEquals(-9999, bigMyLinkedList.get(6));
-        Assertions.assertEquals(-1, bigMyLinkedList.get(0));
-        Assertions.assertEquals(2, bigMyLinkedList.get(2));
-        Assertions.assertEquals(5, bigMyLinkedList.get(5));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.get(7)
-        );
-
-        Assertions.assertEquals(2, mediumMyLinkedList.length());
-        mediumMyLinkedList.add(-9999);
-        Assertions.assertEquals(3, mediumMyLinkedList.length());
-        Assertions.assertEquals(-9999, mediumMyLinkedList.get(2));
-        Assertions.assertEquals(-1, mediumMyLinkedList.get(0));
-        Assertions.assertEquals(1, mediumMyLinkedList.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> mediumMyLinkedList.get(-1)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> mediumMyLinkedList.get(3)
-        );
-
-        Assertions.assertEquals(1, smallMyLinkedList.length());
-        smallMyLinkedList.add(-9999);
-        Assertions.assertEquals(2, smallMyLinkedList.length());
-        Assertions.assertEquals(-9999, smallMyLinkedList.get(1));
-        Assertions.assertEquals(-1, smallMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.get(7)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.get(2)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.get(5000/9)
-        );
-
-        Assertions.assertEquals(0, nanoMyLinkedList.length());
-        nanoMyLinkedList.add(-9999);
-        Assertions.assertEquals(1, nanoMyLinkedList.length());
-        Assertions.assertEquals(-9999, nanoMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyLinkedList.get(1)
-        );
-
-        Assertions.assertEquals(0, nanoNanoMyLinkedList.length());
-        nanoNanoMyLinkedList.add(-9999);
-        Assertions.assertEquals(1, nanoNanoMyLinkedList.length());
-        Assertions.assertEquals(-9999, nanoNanoMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoNanoMyLinkedList.get(1)
-        );
+    @SafeVarargs
+    private static <T> void assertListContent(MyList<T> list, T... expected) {
+        Assertions.assertEquals(expected.length, list.length());
+        for (int i = 0; i < expected.length; i++) {
+            Assertions.assertEquals(expected[i], list.get(i));
+        }
     }
 
     @Test
-    void addToIndex() {
-        MyList<Integer> bigMyLinkedList = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
-        MyList<Integer> mediumMyLinkedList = new MyLinkedList<>(List.of(-1, 1));
-        MyList<Integer> smallMyLinkedList = new MyLinkedList<>(List.of(-1));
-        MyList<Integer> nanoMyLinkedList = new MyLinkedList<>(List.of());
-        MyList<Integer> nanoNanoMyLinkedList = new MyLinkedList<>();
+    void addToEndBigList() {
+        MyList<Integer> bigList = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
+        assertListContent(bigList, -1, 1, 2, 3, 4, 5);
 
-        Assertions.assertEquals(6, bigMyLinkedList.length());
-        bigMyLinkedList.add(2, -9999);
-        bigMyLinkedList.add(5, -111);
-        // bigMyLinkedList = [-1, 1, -9999, 2, 3, -111, 4, 5]
-        Assertions.assertEquals(8, bigMyLinkedList.length());
-        Assertions.assertEquals(5, bigMyLinkedList.get(7));
-        Assertions.assertEquals(4, bigMyLinkedList.get(6));
-        Assertions.assertEquals(-111, bigMyLinkedList.get(5));
-        Assertions.assertEquals(3, bigMyLinkedList.get(4));
-        Assertions.assertEquals(2, bigMyLinkedList.get(3));
-        Assertions.assertEquals(-9999, bigMyLinkedList.get(2));
-        Assertions.assertEquals(-9999, bigMyLinkedList.get(2));
-        Assertions.assertEquals(1, bigMyLinkedList.get(1));
-        Assertions.assertEquals(-1, bigMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.get(8)
-        );
+        bigList.add(-9999);
+        assertListContent(bigList, -1, 1, 2, 3, 4, 5, -9999);
 
-        Assertions.assertEquals(2, mediumMyLinkedList.length());
-        mediumMyLinkedList.add(0, -9999);
-        Assertions.assertEquals(3, mediumMyLinkedList.length());
-        Assertions.assertEquals(1, mediumMyLinkedList.get(2));
-        Assertions.assertEquals(-9999, mediumMyLinkedList.get(0));
-        Assertions.assertEquals(-1, mediumMyLinkedList.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> mediumMyLinkedList.get(-1)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> mediumMyLinkedList.get(3)
-        );
-
-        Assertions.assertEquals(1, smallMyLinkedList.length());
-        smallMyLinkedList.add(1, -9999);
-        Assertions.assertEquals(2, smallMyLinkedList.length());
-        Assertions.assertEquals(-9999, smallMyLinkedList.get(1));
-        Assertions.assertEquals(-1, smallMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.add(3, 0)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.get(7)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.get(2)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.get(5000/9)
-        );
-
-        Assertions.assertEquals(0, nanoMyLinkedList.length());
-        nanoMyLinkedList.add(0, -9999);
-        Assertions.assertEquals(1, nanoMyLinkedList.length());
-        Assertions.assertEquals(-9999, nanoMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyLinkedList.add(2, 0)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyLinkedList.get(1)
-        );
-
-        Assertions.assertEquals(0, nanoNanoMyLinkedList.length());
-        nanoNanoMyLinkedList.add(0, -9999);
-        nanoNanoMyLinkedList.add(1, -1111);
-        Assertions.assertEquals(2, nanoNanoMyLinkedList.length());
-        Assertions.assertEquals(-9999, nanoNanoMyLinkedList.get(0));
-        Assertions.assertEquals(-1111, nanoNanoMyLinkedList.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoNanoMyLinkedList.get(2)
-        );
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> bigList.get(7));
     }
 
     @Test
-    void remove() {
-        MyList<Integer> bigMyLinkedList = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
+    void addToEndMediumList() {
+        MyList<Integer> mediumList = new MyLinkedList<>(List.of(-1, 1));
+        assertListContent(mediumList, -1, 1);
 
-        Assertions.assertEquals(6, bigMyLinkedList.length());
-        Assertions.assertEquals(2, bigMyLinkedList.remove(2));
-        // bigMyLinkedList = [0, 1, 3, 4, 5]
-        Assertions.assertEquals(5, bigMyLinkedList.length());
-        Assertions.assertEquals(3, bigMyLinkedList.get(2));
-        Assertions.assertEquals(1, bigMyLinkedList.get(1));
-        Assertions.assertEquals(0, bigMyLinkedList.get(0));
-        Assertions.assertEquals(5, bigMyLinkedList.get(4));
-        Assertions.assertEquals(4, bigMyLinkedList.get(3));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.remove(5)
-        );
+        mediumList.add(-9999);
+        assertListContent(mediumList, -1, 1, -9999);
 
-        Assertions.assertEquals(0, bigMyLinkedList.remove(0));
-        // bigMyLinkedList = [1, 3, 4, 5]
-        Assertions.assertEquals(4, bigMyLinkedList.length());
-        Assertions.assertEquals(1, bigMyLinkedList.get(0));
-        Assertions.assertEquals(3, bigMyLinkedList.get(1));
-        Assertions.assertEquals(4, bigMyLinkedList.get(2));
-        Assertions.assertEquals(5, bigMyLinkedList.get(3));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.get(4)
-        );
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.remove(4)
-        );
-
-        Assertions.assertEquals(4, bigMyLinkedList.remove(2));
-        Assertions.assertEquals(5, bigMyLinkedList.remove(2));
-        // bigMyLinkedList = [1, 3]
-        Assertions.assertEquals(2, bigMyLinkedList.length());
-        Assertions.assertEquals(1, bigMyLinkedList.get(0));
-        Assertions.assertEquals(3, bigMyLinkedList.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.get(2)
-        );
-
-        Assertions.assertEquals(3, bigMyLinkedList.remove(1));
-        Assertions.assertEquals(1, bigMyLinkedList.remove(0));
-        // bigMyLinkedList = []
-        Assertions.assertEquals(0, bigMyLinkedList.length());
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.get(0)
-        );
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> mediumList.get(-1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> mediumList.get(3));
     }
 
     @Test
-    void set() {
-        MyList<Integer> bigMyLinkedList = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
-        MyList<String> smallMyLinkedList = new MyLinkedList<>(List.of("Hello"));
+    void addToEndSmallList() {
+        MyList<Integer> smallList = new MyLinkedList<>(List.of(-1));
+        assertListContent(smallList, -1);
 
-        Assertions.assertEquals(6, bigMyLinkedList.length());
-        bigMyLinkedList.set(0, 777);
-        bigMyLinkedList.set(5, -99);
-        bigMyLinkedList.set(2, 777);
-        // bigMyLinkedList = [777, 1, 777, 3, 4, -99]
-        Assertions.assertEquals(6, bigMyLinkedList.length());
-        Assertions.assertEquals(777, bigMyLinkedList.get(0));
-        Assertions.assertEquals(1, bigMyLinkedList.get(1));
-        Assertions.assertEquals(777, bigMyLinkedList.get(2));
-        Assertions.assertEquals(3, bigMyLinkedList.get(3));
-        Assertions.assertEquals(4, bigMyLinkedList.get(4));
-        Assertions.assertEquals(-99, bigMyLinkedList.get(5));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.set(6, 111)
-        );
+        smallList.add(-9999);
+        assertListContent(smallList, -1, -9999);
 
-        Assertions.assertEquals(1, smallMyLinkedList.length());
-        smallMyLinkedList.set(0, "aaa");
-        // smallMyLinkedList = ["aaa"]
-        Assertions.assertEquals(1, smallMyLinkedList.length());
-        Assertions.assertEquals("aaa", smallMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.set(1, "aaa")
-        );
-        Assertions.assertEquals("aaa", smallMyLinkedList.remove(0));
-        // smallMyLinkedList = []
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.set(0, "aaa")
-        );
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(2));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(5000 / 9));
     }
 
     @Test
-    void addAll() {
-        MyList<Integer> bigMyLinkedList = new MyLinkedList<>();
-        MyList<Integer> smallMyLinkedList = new MyLinkedList<>();
-        MyList<Integer> nanoMyLinkedList = new MyLinkedList<>();
+    void addToEndEmptyList() {
+        MyList<Integer> emptyList = new MyLinkedList<>();
+        assertListContent(emptyList);
 
-        bigMyLinkedList.addAll(List.of(0, 1, 2, 3));
-        smallMyLinkedList.addAll(List.of(0));
-        nanoMyLinkedList.addAll(List.of());
+        emptyList.add(-9999);
+        assertListContent(emptyList, -9999);
 
-        Assertions.assertEquals(4, bigMyLinkedList.length());
-        Assertions.assertEquals(1, smallMyLinkedList.length());
-        Assertions.assertEquals(0, nanoMyLinkedList.length());
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> emptyList.get(1));
+    }
 
-        Assertions.assertEquals(0, bigMyLinkedList.get(0));
-        Assertions.assertEquals(1, bigMyLinkedList.get(1));
-        Assertions.assertEquals(2, bigMyLinkedList.get(2));
-        Assertions.assertEquals(3, bigMyLinkedList.get(3));
 
-        Assertions.assertEquals(0, smallMyLinkedList.get(0));
-        smallMyLinkedList.add(999);
-        Assertions.assertEquals(2, smallMyLinkedList.length());
-        Assertions.assertEquals(999, smallMyLinkedList.get(1));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.get(2)
-        );
+    @Test
+    void addToIndexBigList() {
+        MyList<Integer> bigList = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
+        assertListContent(bigList, -1, 1, 2, 3, 4, 5);
 
-        Assertions.assertEquals(0, nanoMyLinkedList.length());
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyLinkedList.get(0)
-        );
-        nanoMyLinkedList.add(0, 777);
-        Assertions.assertEquals(1, nanoMyLinkedList.length());
-        Assertions.assertEquals(777, nanoMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyLinkedList.get(1)
-        );
+        bigList.add(2, -9999); // [-1, 1, -9999, 2, 3, 4, 5]
+        bigList.add(5, -111);  // [-1, 1, -9999, 2, 3, -111, 4, 5]
+        assertListContent(bigList, -1, 1, -9999, 2, 3, -111, 4, 5);
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> bigList.get(8));
     }
 
     @Test
-    void bubbleSort() {
-        MyList<Integer> bigMyLinkedList = new MyLinkedList<>();
-        MyList<Integer> smallMyLinkedList = new MyLinkedList<>();
-        MyList<Integer> nanoMyLinkedList = new MyLinkedList<>();
+    void addToIndexMediumList() {
+        MyList<Integer> mediumList = new MyLinkedList<>(List.of(-1, 1));
+        assertListContent(mediumList, -1, 1);
 
-        bigMyLinkedList.addAll(List.of(1, 3, 0, 1, 2, 9, -1));
-        smallMyLinkedList.addAll(List.of(9));
-        nanoMyLinkedList.addAll(List.of());
+        mediumList.add(0, -9999); // [-9999, -1, 1]
+        assertListContent(mediumList, -9999, -1, 1);
 
-        MyList.bubbleSort(bigMyLinkedList);
-        // bigMyLinkedList = [-1, 0, 1, 1, 2, 3, 9]
-        Assertions.assertEquals(7, bigMyLinkedList.length());
-        Assertions.assertEquals(-1, bigMyLinkedList.get(0));
-        Assertions.assertEquals(0, bigMyLinkedList.get(1));
-        Assertions.assertEquals(1, bigMyLinkedList.get(2));
-        Assertions.assertEquals(1, bigMyLinkedList.get(3));
-        Assertions.assertEquals(2, bigMyLinkedList.get(4));
-        Assertions.assertEquals(3, bigMyLinkedList.get(5));
-        Assertions.assertEquals(9, bigMyLinkedList.get(6));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.get(7)
-        );
-        MyList.bubbleSort(bigMyLinkedList);
-        // bigMyLinkedList = [-1, 0, 1, 1, 2, 3, 9]
-        Assertions.assertEquals(7, bigMyLinkedList.length());
-        Assertions.assertEquals(-1, bigMyLinkedList.get(0));
-        Assertions.assertEquals(0, bigMyLinkedList.get(1));
-        Assertions.assertEquals(1, bigMyLinkedList.get(2));
-        Assertions.assertEquals(1, bigMyLinkedList.get(3));
-        Assertions.assertEquals(2, bigMyLinkedList.get(4));
-        Assertions.assertEquals(3, bigMyLinkedList.get(5));
-        Assertions.assertEquals(9, bigMyLinkedList.get(6));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> bigMyLinkedList.get(7)
-        );
-
-        MyList.bubbleSort(smallMyLinkedList);
-        // smallMyLinkedList = [9]
-        Assertions.assertEquals(1, smallMyLinkedList.length());
-        Assertions.assertEquals(9, smallMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.get(1)
-        );
-        MyList.bubbleSort(smallMyLinkedList);
-        // smallMyLinkedList = [9]
-        Assertions.assertEquals(1, smallMyLinkedList.length());
-        Assertions.assertEquals(9, smallMyLinkedList.get(0));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> smallMyLinkedList.get(1)
-        );
-
-        MyList.bubbleSort(nanoMyLinkedList);
-        // nanoMyLinkedList = []
-        Assertions.assertEquals(0, nanoMyLinkedList.length());
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyLinkedList.get(0)
-        );
-        MyList.bubbleSort(nanoMyLinkedList);
-        // nanoMyLinkedList = []
-        Assertions.assertEquals(0, nanoMyLinkedList.length());
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> nanoMyLinkedList.get(0)
-        );
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> mediumList.get(-1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> mediumList.get(3));
     }
 
     @Test
-    void forEach() {
-        MyList<Integer> bigMyLinkedList = new MyLinkedList<>(List.of(0, 1, 2, 3, 4));
-        Integer[] bigArray = new Integer[5];
+    void addToIndexSmallList() {
+        MyList<Integer> smallList = new MyLinkedList<>(List.of(-1));
+        assertListContent(smallList, -1);
 
-        for (Integer i : bigMyLinkedList) {
-            bigArray[i] = i;
+        smallList.add(1, -9999); // [-1, -9999]
+        assertListContent(smallList, -1, -9999);
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.add(3, 0));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(7));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(2));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(5000 / 9));
+    }
+
+    @Test
+    void addToIndexEmptyList() {
+        MyList<Integer> emptyList = new MyLinkedList<>();
+        assertListContent(emptyList);
+
+        emptyList.add(0, -9999);
+        emptyList.add(1, -1111);
+        assertListContent(emptyList, -9999, -1111);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> emptyList.add(3, 0));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> emptyList.get(2));
+    }
+
+
+    @Test
+    void removeFromMiddle() {
+        MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
+        Assertions.assertEquals(6, list.length());
+
+        int removed = list.remove(2); // [0, 1, 3, 4, 5]
+        Assertions.assertEquals(2, removed);
+        assertListContent(list, 0, 1, 3, 4, 5);
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.remove(5));
+    }
+
+    @Test
+    void removeFromStart() {
+        MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
+        list.remove(2); // [0, 1, 3, 4, 5]
+        int removed = list.remove(0); // [1, 3, 4, 5]
+        Assertions.assertEquals(0, removed);
+        assertListContent(list, 1, 3, 4, 5);
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(4));
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.remove(4));
+    }
+
+    @Test
+    void removeFromEnd() {
+        MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
+        list.remove(list.length() - 1); // [0, 1, 2, 3, 4]
+        list.remove(list.length() - 1); // [0, 1, 2, 3]
+
+        int removedLast = list.remove(3); // [0, 1, 2]
+        Assertions.assertEquals(3, removedLast);
+        int removedFinal = list.remove(2); // [0, 1]
+        Assertions.assertEquals(2, removedFinal);
+
+        assertListContent(list, 0, 1);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(2));
+    }
+
+    @Test
+    void removeAllElements() {
+        MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
+        list.remove(2); // [0, 1, 3, 4, 5]
+        list.remove(0); // [1, 3, 4, 5]
+        list.remove(2); // [1, 3, 5]
+        list.remove(2); // [1, 3]
+        list.remove(1); // [1]
+        list.remove(0); // []
+
+        Assertions.assertEquals(0, list.length());
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(0));
+    }
+
+
+    @Test
+    void setMultipleElements() {
+        MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
+        Assertions.assertEquals(6, list.length());
+
+        list.set(0, 777);
+        list.set(5, -99);
+        list.set(2, 777);
+        // [777, 1, 777, 3, 4, -99]
+
+        assertListContent(list, 777, 1, 777, 3, 4, -99);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.set(6, 111));
+    }
+
+    @Test
+    void setSingleElement() {
+        MyList<String> list = new MyLinkedList<>(List.of("Hello"));
+        Assertions.assertEquals(1, list.length());
+
+        list.set(0, "aaa");
+        assertListContent(list, "aaa");
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.set(1, "bbb"));
+    }
+
+    @Test
+    void setOnEmptyList() {
+        MyList<String> list = new MyLinkedList<>();
+
+        Assertions.assertEquals(0, list.length());
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.set(0, "aaa"));
+    }
+
+
+    @Test
+    void addAllMultipleElements() {
+        MyList<Integer> list = new MyLinkedList<>();
+        list.addAll(List.of(0, 1, 2, 3));
+
+        assertListContent(list, 0, 1, 2, 3);
+        Assertions.assertEquals(4, list.length());
+    }
+
+    @Test
+    void addAllSingleElement() {
+        MyList<Integer> list = new MyLinkedList<>();
+        list.addAll(List.of(0));
+
+        assertListContent(list, 0);
+        Assertions.assertEquals(1, list.length());
+
+        list.add(999);
+        assertListContent(list, 0, 999);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(2));
+    }
+
+    @Test
+    void addAllEmptyList() {
+        MyList<Integer> list = new MyLinkedList<>();
+        list.addAll(List.of());
+
+        assertListContent(list);
+        Assertions.assertEquals(0, list.length());
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(0));
+
+        list.add(0, 777);
+        assertListContent(list, 777);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(1));
+    }
+
+
+    @Test
+    void bubbleSortBigList() {
+        MyList<Integer> bigList = new MyLinkedList<>();
+        bigList.addAll(List.of(1, 3, 0, 1, 2, 9, -1));
+
+        MyList.bubbleSort(bigList);
+        assertListContent(bigList, -1, 0, 1, 1, 2, 3, 9);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> bigList.get(7));
+
+        MyList.bubbleSort(bigList);
+        assertListContent(bigList, -1, 0, 1, 1, 2, 3, 9);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> bigList.get(7));
+    }
+
+    @Test
+    void bubbleSortSmallList() {
+        MyList<Integer> smallList = new MyLinkedList<>();
+        smallList.addAll(List.of(9));
+
+        MyList.bubbleSort(smallList);
+        assertListContent(smallList, 9);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(1));
+
+        MyList.bubbleSort(smallList);
+        assertListContent(smallList, 9);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> smallList.get(1));
+    }
+
+    @Test
+    void bubbleSortEmptyList() {
+        MyList<Integer> emptyList = new MyLinkedList<>();
+
+        MyList.bubbleSort(emptyList);
+        assertListContent(emptyList);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> emptyList.get(0));
+
+        MyList.bubbleSort(emptyList);
+        assertListContent(emptyList);
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> emptyList.get(0));
+    }
+
+
+    @Test
+    void forEachBigList() {
+        MyList<Integer> bigList = new MyLinkedList<>(List.of(0, 1, 2, 3, 4));
+        Integer[] result = new Integer[5];
+
+        for (Integer i : bigList) {
+            result[i] = i;
         }
-        Assertions.assertEquals(0, bigArray[0]);
-        Assertions.assertEquals(1, bigArray[1]);
-        Assertions.assertEquals(2, bigArray[2]);
-        Assertions.assertEquals(3, bigArray[3]);
-        Assertions.assertEquals(4, bigArray[4]);
-        for (Iterator<Integer> iterator = bigMyLinkedList.iterator(); iterator.hasNext();) {
-            Integer el = iterator.next();
-            bigArray[el] = el;
+        Assertions.assertArrayEquals(new Integer[]{0, 1, 2, 3, 4}, result);
+
+        for (Iterator<Integer> it = bigList.iterator(); it.hasNext(); ) {
+            Integer el = it.next();
+            result[el] = el;
         }
-        Assertions.assertEquals(0, bigArray[0]);
-        Assertions.assertEquals(1, bigArray[1]);
-        Assertions.assertEquals(2, bigArray[2]);
-        Assertions.assertEquals(3, bigArray[3]);
-        Assertions.assertEquals(4, bigArray[4]);
+        Assertions.assertArrayEquals(new Integer[]{0, 1, 2, 3, 4}, result);
+    }
 
+    @Test
+    void forEachSmallList() {
+        MyList<Integer> smallList = new MyLinkedList<>(List.of(0));
+        Integer[] result = new Integer[1];
 
-        MyList<Integer> smallMyLinkedList = new MyLinkedList<>(List.of(0));
-        Integer[] smallArray = new Integer[1];
-
-        for (Integer i : smallMyLinkedList) {
-            smallArray[i] = i;
+        for (Integer i : smallList) {
+            result[i] = i;
         }
-        Assertions.assertEquals(0, smallArray[0]);
-        for (Iterator<Integer> iterator = smallMyLinkedList.iterator(); iterator.hasNext();) {
-            Integer el = iterator.next();
-            smallArray[el] = el;
-        }
-        Assertions.assertEquals(0, smallArray[0]);
+        Assertions.assertArrayEquals(new Integer[]{0}, result);
 
-
-        MyList<Integer> nanoMyLinkedList = new MyLinkedList<>();
-        Integer[] nanoArray = new Integer[0];
-
-        for (Integer i : nanoMyLinkedList) {
-            nanoArray[i] = i;
+        for (Iterator<Integer> it = smallList.iterator(); it.hasNext(); ) {
+            Integer el = it.next();
+            result[el] = el;
         }
-        for (Iterator<Integer> iterator = nanoMyLinkedList.iterator(); iterator.hasNext();) {
-            Integer el = iterator.next();
-            nanoArray[el] = el;
+        Assertions.assertArrayEquals(new Integer[]{0}, result);
+    }
+
+    @Test
+    void forEachEmptyList() {
+        MyList<Integer> emptyList = new MyLinkedList<>();
+        Integer[] result = new Integer[0];
+
+        for (Integer el : emptyList) {
+            Assertions.fail("Цикл for-each не должен выполняться для пустого списка");
         }
+
+        for (Iterator<Integer> it = emptyList.iterator(); it.hasNext(); ) {
+            Assertions.fail("Итератор не должен иметь элементов в пустом списке");
+        }
+
+        Assertions.assertEquals(0, result.length);
     }
 
 }
