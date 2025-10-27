@@ -1,8 +1,6 @@
 package com.example.mycollections;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 public class MyArrayList<E> implements MyList<E> {
 
@@ -10,6 +8,7 @@ public class MyArrayList<E> implements MyList<E> {
 
     private int size;
     private E[] elementData;
+    private int modCount = 0;
 
     @SuppressWarnings("unchecked")
     public MyArrayList() {
@@ -33,6 +32,7 @@ public class MyArrayList<E> implements MyList<E> {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public void add(E e) {
         if (size + 1 >= elementData.length) {
             Object[] newElementData = new Object[elementData.length
@@ -44,9 +44,11 @@ public class MyArrayList<E> implements MyList<E> {
         }
         elementData[size] = e;
         size++;
+        modCount++;
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public void add(int index, E e) {
         Objects.checkIndex(index, size + 1);
 
@@ -68,13 +70,16 @@ public class MyArrayList<E> implements MyList<E> {
             elementData[index] = e;
         }
         size++;
+        modCount++;
     }
 
+    @Override
     public E get(int index) {
         Objects.checkIndex(index, size);
         return elementData[index];
     }
 
+    @Override
     public E remove(int index) {
         Objects.checkIndex(index, size);
 
@@ -84,22 +89,26 @@ public class MyArrayList<E> implements MyList<E> {
                 size - index - 1);
         size--;
         elementData[size] = null;
+        modCount++;
 
         return removedElement;
     }
 
+    @Override
     public void addAll(Collection<? extends E> collection) {
         for (E e : collection) {
             add(e);
         }
     }
 
+    @Override
     public void set(int index, E e) {
         Objects.checkIndex(index, size);
 
         elementData[index] = e;
     }
 
+    @Override
     public int length() {
         return size;
     }
@@ -107,22 +116,101 @@ public class MyArrayList<E> implements MyList<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new myArrayListIterator();
+        return new Itr();
     }
 
-    private class myArrayListIterator implements Iterator<E> {
+    private class Itr implements Iterator<E> {
 
-        private int currentIndex;
+        int cursor;
+        int lastReturned = -1;
+        int expectedModCount = modCount;
 
         @Override
         public boolean hasNext() {
-            return currentIndex < size;
+            checkForModification();
+            return cursor < size;
         }
 
         @Override
         public E next() {
-            return elementData[currentIndex++];
+            checkForModification();
+            lastReturned = cursor;
+            return elementData[cursor++];
         }
+
+        @Override
+        public void remove() {
+            if (lastReturned < 0) {
+                throw new IllegalStateException();
+            }
+            checkForModification();
+            MyArrayList.this.remove(lastReturned);
+            cursor = lastReturned;
+            lastReturned = -1;
+            expectedModCount = modCount;
+        }
+
+        final void checkForModification() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
+    }
+
+
+    @Override
+    public ListIterator<E> listIterator() {
+        return new ListItr(0);
+    }
+
+    private class ListItr extends Itr implements ListIterator<E> {
+
+        ListItr(int index) {
+            super();
+            cursor = index;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            checkForModification();
+            return cursor > 0;
+        }
+
+        @Override
+        public E previous() {
+            checkForModification();
+            lastReturned = cursor - 1;
+            return elementData[--cursor];
+        }
+
+        @Override
+        public int nextIndex() {
+            return cursor;
+        }
+
+        @Override
+        public int previousIndex() {
+            return cursor - 1;
+        }
+
+        @Override
+        public void set(E e) {
+            if (lastReturned < 0)
+                throw new IllegalStateException();
+            checkForModification();
+            MyArrayList.this.set(lastReturned, e);
+        }
+
+        @Override
+        public void add(E e) {
+            checkForModification();
+            MyArrayList.this.add(cursor, e);
+            cursor++;
+            lastReturned = -1;
+            expectedModCount = modCount;
+        }
+
     }
 
 }
