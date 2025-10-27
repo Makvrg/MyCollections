@@ -10,24 +10,6 @@ import java.util.List;
 
 public class MyArrayListTest {
 
-    @ParameterizedTest
-    @CsvFileSource(resources = "/StringData.csv")
-    void get(String el1, String el2, String el3,
-             String el4, String el5, String el6) {
-        MyList<String> myArrayList = new MyArrayList<>(
-                List.of(el1, el2, el3, el4, el5, el6)
-        );
-        Assertions.assertEquals("ceo0", myArrayList.get(1));
-        Assertions.assertEquals("ceo1", myArrayList.get(2));
-        Assertions.assertEquals("ceo2", myArrayList.get(3));
-        Assertions.assertEquals("ceo3", myArrayList.get(4));
-        Assertions.assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> myArrayList.get(6)
-        );
-    }
-
-
     @SafeVarargs
     private static <T> void assertListContent(MyList<T> list, T... expected) {
         Assertions.assertEquals(expected.length, list.length());
@@ -37,8 +19,24 @@ public class MyArrayListTest {
     }
 
 
+    @ParameterizedTest
+    @CsvFileSource(resources = "/StringData.csv")
+    void get_getElementsFromLists(String el1, String el2, String el3,
+             String el4, String el5, String el6) {
+        MyList<String> list = new MyArrayList<>(
+                List.of(el1, el2, el3, el4, el5, el6)
+        );
+        assertListContent(list, el1, "ceo0", "ceo1",
+                          "ceo2", "ceo3", el6);
+        Assertions.assertThrows(
+                IndexOutOfBoundsException.class,
+                () -> list.get(6)
+        );
+    }
+
+
     @Test
-    void addToEndBigList() {
+    void addToEnd_AddElementToBigList() {
         MyList<Integer> bigList = new MyArrayList<>(List.of(-1, 1, 2, 3, 4, 5), 1);
         Assertions.assertEquals(6, bigList.length());
 
@@ -50,7 +48,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void addToEndMediumList() {
+    void addToEnd_AddElementToMediumList() {
         MyList<Integer> mediumList = new MyArrayList<>(List.of(-1, 1), 0);
         Assertions.assertEquals(2, mediumList.length());
 
@@ -64,7 +62,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void addToEndSmallList() {
+    void addToEnd_AddElementToSmallList() {
         MyList<Integer> smallList = new MyArrayList<>(List.of(-1), 20);
         Assertions.assertEquals(1, smallList.length());
 
@@ -80,7 +78,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void addToEndEmptyLists() {
+    void addToEnd_AddElementToEmptyLists() {
         List<MyList<Integer>> listWithArrayLists = List.of(
                 new MyArrayList<>(), new MyArrayList<>(List.of()),
                 new MyArrayList<>(25)
@@ -96,7 +94,7 @@ public class MyArrayListTest {
 
 
     @Test
-    void addToIndexBigList() {
+    void addToIndex_AddsElementToBigList() {
         MyList<Integer> bigList = new MyArrayList<>(List.of(-1, 1, 2, 3, 4, 5), 0);
         Assertions.assertEquals(6, bigList.length());
 
@@ -108,7 +106,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void addToIndexMediumList() {
+    void addToIndex_AddElementToMediumList() {
         MyList<Integer> mediumList = new MyArrayList<>(List.of(-1, 1), 0);
         Assertions.assertEquals(2, mediumList.length());
 
@@ -122,7 +120,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void addToIndexSmallList() {
+    void addToIndex_AddElementToSmallList() {
         MyList<Integer> smallList = new MyArrayList<>(List.of(-1), 20);
         Assertions.assertEquals(1, smallList.length());
 
@@ -140,7 +138,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void addToIndexEmptyLists() {
+    void addToIndex_AddElementsToEmptyLists() {
         List<MyList<Integer>> listWithArrayLists = List.of(
                 new MyArrayList<>(), new MyArrayList<>(List.of()),
                 new MyArrayList<>(1)
@@ -158,7 +156,7 @@ public class MyArrayListTest {
 
 
     @Test
-    void removeFromMiddle() {
+    void remove_removeElementFromMiddle() {
         MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
         Assertions.assertEquals(6, list.length());
 
@@ -171,12 +169,12 @@ public class MyArrayListTest {
     }
 
     @Test
-    void removeFromStart() {
+    void remove_removeElementsFromStart() {
         MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
-        list.remove(2); // [0, 1, 3, 4, 5]
-        int removed = list.remove(0); // [1, 3, 4, 5]
-        Assertions.assertEquals(0, removed);
-        assertListContent(list, 1, 3, 4, 5);
+        list.remove(0); // [1, 2, 3, 4, 5]
+        int removed = list.remove(0); // [2, 3, 4, 5]
+        Assertions.assertEquals(1, removed);
+        assertListContent(list, 2, 3, 4, 5);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> list.get(4));
@@ -185,7 +183,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void removeFromEnd() {
+    void remove_removeElementsFromEnd() {
         MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
         list.remove(list.length() - 1); // [0, 1, 2, 3, 4]
         list.remove(list.length() - 1); // [0, 1, 2, 3]
@@ -201,7 +199,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void removeAllElements() {
+    void remove_removeAllElements() {
         MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
         list.remove(2); // [0, 1, 3, 4, 5]
         list.remove(0); // [1, 3, 4, 5]
@@ -217,7 +215,7 @@ public class MyArrayListTest {
 
 
     @Test
-    void setMultipleElements() {
+    void set_setMultipleElements() {
         MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4, 5));
         Assertions.assertEquals(6, list.length());
 
@@ -232,7 +230,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void setSingleElement() {
+    void set_setSingleElement() {
         MyList<String> list = new MyArrayList<>(List.of("Hello"));
         Assertions.assertEquals(1, list.length());
 
@@ -244,7 +242,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void setOnEmptyList() {
+    void set_setOnEmptyList() {
         MyList<String> list = new MyArrayList<>();
 
         Assertions.assertEquals(0, list.length());
@@ -254,7 +252,7 @@ public class MyArrayListTest {
 
 
     @Test
-    void addAllMultipleElements() {
+    void addAll_addMultipleElements() {
         MyList<Integer> list = new MyArrayList<>();
         list.addAll(List.of(0, 1, 2, 3));
 
@@ -263,7 +261,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void addAllSingleElement() {
+    void addAll_addSingleElement() {
         MyList<Integer> list = new MyArrayList<>();
         list.addAll(List.of(0));
 
@@ -277,7 +275,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void addAllEmptyList() {
+    void addAll_addToEmptyList() {
         MyList<Integer> list = new MyArrayList<>();
         list.addAll(List.of());
 
@@ -294,7 +292,7 @@ public class MyArrayListTest {
 
 
     @Test
-    void bubbleSortBigList() {
+    void bubbleSort_sortBigList() {
         MyList<Integer> bigList = new MyArrayList<>();
         bigList.addAll(List.of(1, 3, 0, 1, 2, 9, -1));
 
@@ -310,7 +308,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void bubbleSortSmallList() {
+    void bubbleSort_sortSmallList() {
         MyList<Integer> smallList = new MyArrayList<>();
         smallList.addAll(List.of(9));
 
@@ -326,7 +324,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void bubbleSortEmptyList() {
+    void bubbleSort_sortEmptyList() {
         MyList<Integer> emptyList = new MyArrayList<>();
 
         MyList.bubbleSort(emptyList);
@@ -342,7 +340,7 @@ public class MyArrayListTest {
 
 
     @Test
-    void forEachBigList() {
+    void forEach_iterationBigList() {
         MyList<Integer> bigList = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
         Integer[] result = new Integer[5];
 
@@ -359,7 +357,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void forEachSmallList() {
+    void forEach_iterationSmallList() {
         MyList<Integer> smallList = new MyArrayList<>(List.of(0));
         Integer[] result = new Integer[1];
 
@@ -376,7 +374,7 @@ public class MyArrayListTest {
     }
 
     @Test
-    void forEachEmptyList() {
+    void forEach_iterationEmptyList() {
         MyList<Integer> emptyList = new MyArrayList<>();
         Integer[] result = new Integer[0];
 

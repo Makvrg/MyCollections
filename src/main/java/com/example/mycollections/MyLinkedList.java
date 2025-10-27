@@ -177,9 +177,6 @@ public class MyLinkedList<E> implements MyList<E> {
         return new myLinkedListIterator();
     }
 
-//    public Iterator<E> reverseIterator() {
-//        return new reverseMyLinkedListIterator();
-//    }
 
     private static class MyNode<E> {
         MyNode<E> prev;
@@ -216,28 +213,5 @@ public class MyLinkedList<E> implements MyList<E> {
         }
 
     }
-
-//    private class reverseMyLinkedListIterator implements Iterator<E> {
-//
-//        private MyNode<E> currentMyNode;
-//        private int currentIndex = size - 1;
-//
-//        @Override
-//        public boolean hasNext() {
-//            return currentIndex > 0;
-//        }
-//
-//        @Override
-//        public E next() {
-//            if (currentIndex == size - 1) {
-//                currentMyNode = last;
-//            } else {
-//                currentMyNode = currentMyNode.prev;
-//            }
-//            currentIndex--;
-//            return currentMyNode.item;
-//        }
-//
-//    }
 
 }

@@ -21,24 +21,22 @@ public class MyLinkedListTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = "/StringData.csv")
-    void get(String el1, String el2, String el3,
+    void get_getElementsFromLists(String el1, String el2, String el3,
              String el4, String el5, String el6) {
-        MyList<String> myLinkedList = new MyLinkedList<>(
+        MyList<String> list = new MyLinkedList<>(
                 List.of(el1, el2, el3, el4, el5, el6)
         );
-        Assertions.assertEquals("ceo0", myLinkedList.get(1));
-        Assertions.assertEquals("ceo1", myLinkedList.get(2));
-        Assertions.assertEquals("ceo2", myLinkedList.get(3));
-        Assertions.assertEquals("ceo3", myLinkedList.get(4));
+        assertListContent(list, el1, "ceo0", "ceo1",
+                          "ceo2", "ceo3", el6);
         Assertions.assertThrows(
                 IndexOutOfBoundsException.class,
-                () -> myLinkedList.get(6)
+                () -> list.get(6)
         );
     }
 
 
     @Test
-    void addToEndBigList() {
+    void addToEnd_AddElementToBigList() {
         MyList<Integer> bigList = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
         assertListContent(bigList, -1, 1, 2, 3, 4, 5);
 
@@ -50,7 +48,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void addToEndMediumList() {
+    void addToEnd_AddElementToMediumList() {
         MyList<Integer> mediumList = new MyLinkedList<>(List.of(-1, 1));
         assertListContent(mediumList, -1, 1);
 
@@ -64,7 +62,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void addToEndSmallList() {
+    void addToEnd_AddElementToSmallList() {
         MyList<Integer> smallList = new MyLinkedList<>(List.of(-1));
         assertListContent(smallList, -1);
 
@@ -78,7 +76,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void addToEndEmptyList() {
+    void addToEnd_AddElementToEmptyLists() {
         MyList<Integer> emptyList1 = new MyLinkedList<>();
         MyList<Integer> emptyList2 = new MyLinkedList<>(List.of());
         assertListContent(emptyList1);
@@ -97,7 +95,7 @@ public class MyLinkedListTest {
 
 
     @Test
-    void addToIndexBigList() {
+    void addToIndex_AddsElementToBigList() {
         MyList<Integer> bigList = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
         assertListContent(bigList, -1, 1, 2, 3, 4, 5);
 
@@ -110,7 +108,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void addToIndexMediumList() {
+    void addToIndex_AddElementToMediumList() {
         MyList<Integer> mediumList = new MyLinkedList<>(List.of(-1, 1));
         assertListContent(mediumList, -1, 1);
 
@@ -124,7 +122,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void addToIndexSmallList() {
+    void addToIndex_AddElementToSmallList() {
         MyList<Integer> smallList = new MyLinkedList<>(List.of(-1));
         assertListContent(smallList, -1);
 
@@ -142,7 +140,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void addToIndexEmptyList() {
+    void addToIndex_AddElementsToEmptyLists() {
         MyList<Integer> emptyList = new MyLinkedList<>();
         assertListContent(emptyList);
 
@@ -157,7 +155,7 @@ public class MyLinkedListTest {
 
 
     @Test
-    void removeFromMiddle() {
+    void remove_removeElementFromMiddle() {
         MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
         Assertions.assertEquals(6, list.length());
 
@@ -170,12 +168,12 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void removeFromStart() {
+    void remove_removeElementsFromStart() {
         MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
-        list.remove(2); // [0, 1, 3, 4, 5]
-        int removed = list.remove(0); // [1, 3, 4, 5]
-        Assertions.assertEquals(0, removed);
-        assertListContent(list, 1, 3, 4, 5);
+        list.remove(0); // [1, 2, 3, 4, 5]
+        int removed = list.remove(0); // [2, 3, 4, 5]
+        Assertions.assertEquals(1, removed);
+        assertListContent(list, 2, 3, 4, 5);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> list.get(4));
@@ -184,7 +182,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void removeFromEnd() {
+    void remove_removeElementsFromEnd() {
         MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
         list.remove(list.length() - 1); // [0, 1, 2, 3, 4]
         list.remove(list.length() - 1); // [0, 1, 2, 3]
@@ -200,7 +198,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void removeAllElements() {
+    void remove_removeAllElements() {
         MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
         list.remove(2); // [0, 1, 3, 4, 5]
         list.remove(0); // [1, 3, 4, 5]
@@ -216,7 +214,7 @@ public class MyLinkedListTest {
 
 
     @Test
-    void setMultipleElements() {
+    void set_setMultipleElements() {
         MyList<Integer> list = new MyLinkedList<>(List.of(0, 1, 2, 3, 4, 5));
         Assertions.assertEquals(6, list.length());
 
@@ -231,7 +229,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void setSingleElement() {
+    void set_setSingleElement() {
         MyList<String> list = new MyLinkedList<>(List.of("Hello"));
         Assertions.assertEquals(1, list.length());
 
@@ -243,7 +241,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void setOnEmptyList() {
+    void set_setOnEmptyList() {
         MyList<String> list = new MyLinkedList<>();
 
         Assertions.assertEquals(0, list.length());
@@ -253,7 +251,7 @@ public class MyLinkedListTest {
 
 
     @Test
-    void addAllMultipleElements() {
+    void addAll_addMultipleElements() {
         MyList<Integer> list = new MyLinkedList<>();
         list.addAll(List.of(0, 1, 2, 3));
 
@@ -262,7 +260,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void addAllSingleElement() {
+    void addAll_addSingleElement() {
         MyList<Integer> list = new MyLinkedList<>();
         list.addAll(List.of(0));
 
@@ -276,7 +274,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void addAllEmptyList() {
+    void addAll_addToEmptyList() {
         MyList<Integer> list = new MyLinkedList<>();
         list.addAll(List.of());
 
@@ -293,7 +291,7 @@ public class MyLinkedListTest {
 
 
     @Test
-    void bubbleSortBigList() {
+    void bubbleSort_sortBigList() {
         MyList<Integer> bigList = new MyLinkedList<>();
         bigList.addAll(List.of(1, 3, 0, 1, 2, 9, -1));
 
@@ -309,7 +307,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void bubbleSortSmallList() {
+    void bubbleSort_sortSmallList() {
         MyList<Integer> smallList = new MyLinkedList<>();
         smallList.addAll(List.of(9));
 
@@ -325,7 +323,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void bubbleSortEmptyList() {
+    void bubbleSort_sortEmptyList() {
         MyList<Integer> emptyList = new MyLinkedList<>();
 
         MyList.bubbleSort(emptyList);
@@ -341,7 +339,7 @@ public class MyLinkedListTest {
 
 
     @Test
-    void forEachBigList() {
+    void forEach_iterationBigList() {
         MyList<Integer> bigList = new MyLinkedList<>(List.of(0, 1, 2, 3, 4));
         Integer[] result = new Integer[5];
 
@@ -358,7 +356,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void forEachSmallList() {
+    void forEach_iterationSmallList() {
         MyList<Integer> smallList = new MyLinkedList<>(List.of(0));
         Integer[] result = new Integer[1];
 
@@ -375,7 +373,7 @@ public class MyLinkedListTest {
     }
 
     @Test
-    void forEachEmptyList() {
+    void forEach_iterationEmptyList() {
         MyList<Integer> emptyList = new MyLinkedList<>();
         Integer[] result = new Integer[0];
 
