@@ -160,8 +160,8 @@ public class MyArrayList<E> implements MyList<E> {
 
 
     @Override
-    public ListIterator<E> listIterator() {
-        return new ListItr(0);
+    public ListIterator<E> listIterator(Integer index) {
+        return new ListItr(index);
     }
 
     private class ListItr extends Itr implements ListIterator<E> {

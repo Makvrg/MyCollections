@@ -37,6 +37,6 @@ public interface MyList<E> extends Iterable<E> {
         }
     }
 
-    ListIterator<E> listIterator();
+    ListIterator<E> listIterator(Integer index);
 
 }

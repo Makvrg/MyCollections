@@ -202,7 +202,7 @@ public class MyLinkedList<E> implements MyList<E> {
 
     private class Itr implements Iterator<E> {
 
-        MyNode<E> currentMyNode;
+        MyNode<E> currentMyNode = first;
         int cursor;
         MyNode<E> lastReturned;
         int indexOfLastReturned = -1;
@@ -232,6 +232,7 @@ public class MyLinkedList<E> implements MyList<E> {
                 throw new IllegalStateException();
             }
             checkForModification();
+            currentMyNode = lastReturned.prev;
             if (size == 1) {
                 first = null;
                 last = null;
@@ -263,8 +264,8 @@ public class MyLinkedList<E> implements MyList<E> {
 
 
     @Override
-    public ListIterator<E> listIterator() {
-        return new ListItr(0);
+    public ListIterator<E> listIterator(Integer index) {
+        return new ListItr(index);
     }
 
     private class ListItr extends Itr implements ListIterator<E> {
@@ -314,19 +315,21 @@ public class MyLinkedList<E> implements MyList<E> {
         public void add(E e) {
             checkForModification();
             if (cursor == size) {
-                add(e);
+                MyLinkedList.this.add(e);
+                currentMyNode = last;
             } else if (cursor == 0) {
                 MyNode<E> newMyNode = new MyNode<>(null, e, first);
                 first.prev = newMyNode;
                 first = newMyNode;
+                currentMyNode = first;
                 size++;
                 modCount++;
             } else {
                 MyNode<E> newMyNode = new MyNode<>(currentMyNode, e,
                                                    currentMyNode.next);
                 currentMyNode.next = newMyNode;
+                currentMyNode.next.next.prev = newMyNode;
                 currentMyNode = newMyNode;
-                currentMyNode.next.prev = currentMyNode;
                 size++;
                 modCount++;
             }

@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class MyArrayListTest {
 
@@ -387,6 +386,272 @@ public class MyArrayListTest {
         }
 
         Assertions.assertEquals(0, result.length);
+    }
+
+
+    @Test
+    void removeInIterator_removeElementsFromStart() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+        Integer[] result = new Integer[5];
+
+        for (Iterator<Integer> it = list.iterator(); it.hasNext(); ) {
+            Integer el = it.next();
+            if (el == 0 || el == 1) {
+                it.remove();
+                Assertions.assertThrows(IllegalStateException.class,
+                                        it::remove);
+            }
+        }
+        for (Integer i : list) {
+            result[i] = i;
+        }
+        Assertions.assertArrayEquals(new Integer[]{null, null, 2, 3, 4},
+                                     result);
+    }
+
+    @Test
+    void removeInIterator_removeElementsFromMiddle() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+        Integer[] result = new Integer[5];
+
+        for (Iterator<Integer> it = list.iterator(); it.hasNext(); ) {
+            Integer el = it.next();
+            if (el == 1 || el == 3) {
+                it.remove();
+                Assertions.assertThrows(IllegalStateException.class,
+                                        it::remove);
+            }
+        }
+        for (Integer i : list) {
+            result[i] = i;
+        }
+        Assertions.assertArrayEquals(new Integer[]{0, null, 2, null, 4},
+                                     result);
+    }
+
+    @Test
+    void removeInIterator_removeElementsFromEnd() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+        Integer[] result = new Integer[5];
+
+        for (Iterator<Integer> it = list.iterator(); it.hasNext(); ) {
+            Integer el = it.next();
+            if (el == 3 || el == 4) {
+                it.remove();
+                Assertions.assertThrows(IllegalStateException.class,
+                                        it::remove);
+            }
+        }
+        for (Integer i : list) {
+            result[i] = i;
+        }
+        Assertions.assertArrayEquals(new Integer[]{0, 1, 2, null, null},
+                                     result);
+    }
+
+    @Test
+    void removeInIterator_removeAllElements() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+        Integer[] result = new Integer[5];
+
+        for (Iterator<Integer> it = list.iterator(); it.hasNext(); ) {
+            it.next();
+            it.remove();
+            Assertions.assertThrows(IllegalStateException.class,
+                                    it::remove);
+        }
+        for (Integer i : list) {
+            result[i] = i;
+        }
+        Assertions.assertArrayEquals(new Integer[]{null, null, null, null, null},
+                                     result);
+    }
+
+    @Test
+    void removeInIterator_expectConcurrentModificationException() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+
+        Iterator<Integer> it = list.iterator();
+        if (it.hasNext()) {
+            it.next();
+            list.remove(0);
+            Assertions.assertThrows(ConcurrentModificationException.class,
+                                    it::remove);
+        }
+    }
+
+
+    @Test
+    void forEachListIterator_iterationList() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+        MyList<Integer> result = new MyArrayList<>();
+
+        for (ListIterator<Integer> it = list.listIterator(1); it.hasNext(); ) {
+            Integer el = it.next();
+            result.add(el);
+            Assertions.assertTrue(it.hasPrevious());
+            Assertions.assertEquals(el + 1, it.nextIndex());
+            Assertions.assertEquals(el, it.previousIndex());
+            if (el == 4) {
+                for (int i = 0; i < list.length(); i++) {
+                    Integer backEl = it.previous();
+                    result.add(backEl);
+                }
+                Assertions.assertFalse(it.hasPrevious());
+                break;
+            }
+        }
+        assertListContent(result, 1, 2, 3, 4, 4, 3, 2, 1, 0);
+    }
+
+
+    @Test
+    void addInListIterator_addElementsToBigList() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 3, 4, 5));
+        Integer[] result = new Integer[9];
+
+        ListIterator<Integer> it = list.listIterator(0);
+        it.add(-2);
+        it.add(-1);
+        if (it.hasNext()) {
+            Integer el = it.next();
+            Assertions.assertEquals(0, el);
+        }
+        if (it.hasNext()) {
+            Integer el = it.next();
+            Assertions.assertEquals(1, el);
+        }
+        it.add(2);
+        Integer el = 0;
+        while (it.hasNext()) {
+            el = it.next();
+        }
+        Assertions.assertEquals(5, el);
+        it.add(6);
+        for (Integer i : list) {
+            result[i + 2] = i;
+        }
+        Assertions.assertArrayEquals(new Integer[]{-2, -1, 0, 1, 2, 3, 4, 5, 6},
+                                     result);
+    }
+
+    @Test
+    void addInListIterator_addElementsToSmallList() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0));
+        Integer[] result = new Integer[4];
+
+        ListIterator<Integer> it = list.listIterator(0);
+        it.add(-2);
+        it.add(-1);
+        if (it.hasNext()) {
+            Integer el = it.next();
+            Assertions.assertEquals(0, el);
+        }
+        if (it.hasNext()) {
+            Assertions.fail("Не должно быть дальше элементов");
+        }
+        it.add(1);
+        for (Integer i : list) {
+            result[i + 2] = i;
+        }
+        Assertions.assertArrayEquals(new Integer[]{-2, -1, 0, 1},
+                                     result);
+    }
+
+    @Test
+    void addInListIterator_addElementsToEmptyList() {
+        MyList<Integer> list = new MyArrayList<>();
+        Integer[] result = new Integer[3];
+
+        ListIterator<Integer> it = list.listIterator(0);
+        it.add(-2);
+        it.add(-1);
+        if (it.hasNext()) {
+            Assertions.fail("Не должно быть дальше элементов");
+        }
+        it.add(0);
+        for (Integer i : list) {
+            result[i + 2] = i;
+        }
+        Assertions.assertArrayEquals(new Integer[]{-2, -1, 0},
+                                     result);
+    }
+
+    @Test
+    void addInIterator_expectConcurrentModificationException() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+
+        ListIterator<Integer> it = list.listIterator(0);
+        if (it.hasNext()) {
+            it.next();
+            list.add(0);
+            Assertions.assertThrows(ConcurrentModificationException.class,
+                    () -> it.add(9));
+        }
+    }
+
+
+    @Test
+    void setInListIterator_setMultipleElements() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+        MyList<Integer> result = new MyArrayList<>();
+
+        ListIterator<Integer> it = list.listIterator(0);
+
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> it.set(2));
+
+        if (it.hasNext()) {
+            Integer el = it.next();
+            Assertions.assertEquals(0, el);
+        }
+        it.set(-2);
+        if (it.hasNext()) {
+            Integer el = it.next();
+            Assertions.assertEquals(1, el);
+        }
+        it.set(-1);
+        Integer el = 0;
+        while (it.hasNext()) {
+            el = it.next();
+        }
+        Assertions.assertEquals(4, el);
+        it.set(9);
+        for (Integer i : list) {
+            result.add(i);
+        }
+        assertListContent(result, -2, -1, 2, 3, 9);
+    }
+
+    @Test
+    void setInListIterator_setSingleElement() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0));
+        MyList<Integer> result = new MyArrayList<>();
+
+        ListIterator<Integer> it = list.listIterator(0);
+
+        if (it.hasNext()) {
+            Integer el = it.next();
+            Assertions.assertEquals(0, el);
+        }
+        it.set(99);
+        for (Integer i : list) {
+            result.add(i);
+        }
+        assertListContent(result, 99);
+    }
+
+    @Test
+    void setInIterator_expectConcurrentModificationException() {
+        MyList<Integer> list = new MyArrayList<>(List.of(0, 1, 2, 3, 4));
+
+        ListIterator<Integer> it = list.listIterator(0);
+        if (it.hasNext()) {
+            it.next();
+            list.add(99);
+            Assertions.assertThrows(ConcurrentModificationException.class,
+                    () -> it.set(9));
+        }
     }
 
 }
