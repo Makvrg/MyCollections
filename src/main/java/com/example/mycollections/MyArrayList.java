@@ -213,4 +213,54 @@ public class MyArrayList<E> implements MyList<E> {
 
     }
 
+
+    private boolean equalsRange(MyList<?> list) {
+        if (size != list.length()) {
+            return false;
+        }
+        Iterator<?> selfIt = this.iterator();
+        Iterator<?> listIt = list.iterator();
+        while (selfIt.hasNext() && listIt.hasNext()) {
+            if (!Objects.equals(selfIt.next(), listIt.next())) {
+                return false;
+            }
+        }
+        if (size != list.length()) {
+            return false;
+        }
+        return !selfIt.hasNext() && !listIt.hasNext();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null) {
+            return false;
+        }
+        if (!(object instanceof MyList<?> that)) {
+            return false;
+        }
+        return equalsRange(that);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(size, Arrays.hashCode(elementData));
+    }
+
+    @Override
+    public String toString() {
+        Object[] subElementData = new Object[size];
+        System.arraycopy(elementData, 0, subElementData, 0, size);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("MyArrayList{")
+          .append(Arrays.toString(subElementData))
+          .append('}');
+        return sb.toString();
+    }
+
 }
+

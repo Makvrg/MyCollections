@@ -12,12 +12,45 @@ import java.util.ListIterator;
 
 public class MyLinkedListTest {
 
-    @SafeVarargs
-    private static <T> void assertListContent(MyList<T> list, T... expected) {
-        Assertions.assertEquals(expected.length, list.length());
-        for (int i = 0; i < expected.length; i++) {
-            Assertions.assertEquals(expected[i], list.get(i));
-        }
+    @Test
+    void toString_toStringBigLists() {
+        MyList<Integer> bigIntegersList = new MyLinkedList<>(
+                List.of(1, 2, 3, 4, 5)
+        );
+        MyList<String> bigStringsList = new MyLinkedList<>(
+                List.of(" abc", "he llo", "world!  ")
+        );
+        String expectedIntegers = "MyLinkedList{[1, 2, 3, 4, 5]}";
+        String expectedStrings = "MyLinkedList{[ abc, he llo, world!  ]}";
+
+        Assertions.assertEquals(expectedIntegers, bigIntegersList.toString());
+        Assertions.assertEquals(expectedStrings, bigStringsList.toString());
+    }
+
+    @Test
+    void toString_toStringSmallLists() {
+        MyList<Integer> smallIntegersList = new MyLinkedList<>(
+                List.of(1)
+        );
+        MyList<String> smallStringsList = new MyLinkedList<>(
+                List.of("abc")
+        );
+        String expectedIntegers = "MyLinkedList{[1]}";
+        String expectedStrings = "MyLinkedList{[abc]}";
+
+        Assertions.assertEquals(expectedIntegers, smallIntegersList.toString());
+        Assertions.assertEquals(expectedStrings, smallStringsList.toString());
+    }
+
+    @Test
+    void toString_toStringEmptyLists() {
+        MyList<Integer> emptyIntegersList = new MyLinkedList<>();
+        MyList<String> emptyStringsList = new MyLinkedList<>();
+        String expectedIntegers = "MyLinkedList{[]}";
+        String expectedStrings = "MyLinkedList{[]}";
+
+        Assertions.assertEquals(expectedIntegers, emptyIntegersList.toString());
+        Assertions.assertEquals(expectedStrings, emptyStringsList.toString());
     }
 
 
@@ -28,8 +61,12 @@ public class MyLinkedListTest {
         MyList<String> list = new MyLinkedList<>(
                 List.of(el1, el2, el3, el4, el5, el6)
         );
-        assertListContent(list, el1, "ceo0", "ceo1",
-                          "ceo2", "ceo3", el6);
+
+        MyList<String> expectedMyList = new MyArrayList<>(
+                List.of(el1, "ceo0", "ceo1", "ceo2", "ceo3", el6)
+        );
+        Assertions.assertEquals(expectedMyList, list);
+
         Assertions.assertThrows(
                 IndexOutOfBoundsException.class,
                 () -> list.get(6)
@@ -40,10 +77,18 @@ public class MyLinkedListTest {
     @Test
     void addToEnd_AddElementToBigList() {
         MyList<Integer> bigList = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
-        assertListContent(bigList, -1, 1, 2, 3, 4, 5);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(-1, 1, 2, 3, 4, 5)
+        );
+        Assertions.assertEquals(expectedMyList, bigList);
 
         bigList.add(-9999);
-        assertListContent(bigList, -1, 1, 2, 3, 4, 5, -9999);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(-1, 1, 2, 3, 4, 5, -9999)
+        );
+        Assertions.assertEquals(expectedMyList, bigList);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> bigList.get(7));
@@ -52,10 +97,18 @@ public class MyLinkedListTest {
     @Test
     void addToEnd_AddElementToMediumList() {
         MyList<Integer> mediumList = new MyLinkedList<>(List.of(-1, 1));
-        assertListContent(mediumList, -1, 1);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(-1, 1)
+        );
+        Assertions.assertEquals(expectedMyList, mediumList);
 
         mediumList.add(-9999);
-        assertListContent(mediumList, -1, 1, -9999);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(-1, 1, -9999)
+        );
+        Assertions.assertEquals(expectedMyList, mediumList);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> mediumList.get(-1));
@@ -66,10 +119,18 @@ public class MyLinkedListTest {
     @Test
     void addToEnd_AddElementToSmallList() {
         MyList<Integer> smallList = new MyLinkedList<>(List.of(-1));
-        assertListContent(smallList, -1);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(-1)
+        );
+        Assertions.assertEquals(expectedMyList, smallList);
 
         smallList.add(-9999);
-        assertListContent(smallList, -1, -9999);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(-1, -9999)
+        );
+        Assertions.assertEquals(expectedMyList, smallList);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> smallList.get(2));
@@ -81,13 +142,19 @@ public class MyLinkedListTest {
     void addToEnd_AddElementToEmptyLists() {
         MyList<Integer> emptyList1 = new MyLinkedList<>();
         MyList<Integer> emptyList2 = new MyLinkedList<>(List.of());
-        assertListContent(emptyList1);
-        assertListContent(emptyList2);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>();
+        Assertions.assertEquals(expectedMyList, emptyList1);
+        Assertions.assertEquals(expectedMyList, emptyList2);
 
         emptyList1.add(-9999);
         emptyList2.add(-9999);
-        assertListContent(emptyList1, -9999);
-        assertListContent(emptyList2, -9999);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(-9999)
+        );
+        Assertions.assertEquals(expectedMyList, emptyList1);
+        Assertions.assertEquals(expectedMyList, emptyList2);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> emptyList1.get(1));
@@ -99,11 +166,19 @@ public class MyLinkedListTest {
     @Test
     void addToIndex_AddsElementToBigList() {
         MyList<Integer> bigList = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
-        assertListContent(bigList, -1, 1, 2, 3, 4, 5);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(-1, 1, 2, 3, 4, 5)
+        );
+        Assertions.assertEquals(expectedMyList, bigList);
 
         bigList.add(2, -9999); // [-1, 1, -9999, 2, 3, 4, 5]
         bigList.add(5, -111);  // [-1, 1, -9999, 2, 3, -111, 4, 5]
-        assertListContent(bigList, -1, 1, -9999, 2, 3, -111, 4, 5);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(-1, 1, -9999, 2, 3, -111, 4, 5)
+        );
+        Assertions.assertEquals(expectedMyList, bigList);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> bigList.get(8));
@@ -112,10 +187,18 @@ public class MyLinkedListTest {
     @Test
     void addToIndex_AddElementToMediumList() {
         MyList<Integer> mediumList = new MyLinkedList<>(List.of(-1, 1));
-        assertListContent(mediumList, -1, 1);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(-1, 1)
+        );
+        Assertions.assertEquals(expectedMyList, mediumList);
 
         mediumList.add(0, -9999); // [-9999, -1, 1]
-        assertListContent(mediumList, -9999, -1, 1);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(-9999, -1, 1)
+        );
+        Assertions.assertEquals(expectedMyList, mediumList);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> mediumList.get(-1));
@@ -126,10 +209,18 @@ public class MyLinkedListTest {
     @Test
     void addToIndex_AddElementToSmallList() {
         MyList<Integer> smallList = new MyLinkedList<>(List.of(-1));
-        assertListContent(smallList, -1);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(-1)
+        );
+        Assertions.assertEquals(expectedMyList, smallList);
 
         smallList.add(1, -9999); // [-1, -9999]
-        assertListContent(smallList, -1, -9999);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(-1, -9999)
+        );
+        Assertions.assertEquals(expectedMyList, smallList);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> smallList.add(3, 0));
@@ -144,11 +235,18 @@ public class MyLinkedListTest {
     @Test
     void addToIndex_AddElementsToEmptyLists() {
         MyList<Integer> emptyList = new MyLinkedList<>();
-        assertListContent(emptyList);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>();
+        Assertions.assertEquals(expectedMyList, emptyList);
 
         emptyList.add(0, -9999);
         emptyList.add(1, -1111);
-        assertListContent(emptyList, -9999, -1111);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(-9999, -1111)
+        );
+        Assertions.assertEquals(expectedMyList, emptyList);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> emptyList.add(3, 0));
         Assertions.assertThrows(IndexOutOfBoundsException.class,
@@ -163,7 +261,11 @@ public class MyLinkedListTest {
 
         int removed = list.remove(2); // [0, 1, 3, 4, 5]
         Assertions.assertEquals(2, removed);
-        assertListContent(list, 0, 1, 3, 4, 5);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(0, 1, 3, 4, 5)
+        );
+        Assertions.assertEquals(expectedMyList, list);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> list.remove(5));
@@ -175,7 +277,11 @@ public class MyLinkedListTest {
         list.remove(0); // [1, 2, 3, 4, 5]
         int removed = list.remove(0); // [2, 3, 4, 5]
         Assertions.assertEquals(1, removed);
-        assertListContent(list, 2, 3, 4, 5);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(2, 3, 4, 5)
+        );
+        Assertions.assertEquals(expectedMyList, list);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> list.get(4));
@@ -194,7 +300,11 @@ public class MyLinkedListTest {
         int removedFinal = list.remove(2); // [0, 1]
         Assertions.assertEquals(2, removedFinal);
 
-        assertListContent(list, 0, 1);
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(0, 1)
+        );
+        Assertions.assertEquals(expectedMyList, list);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> list.get(2));
     }
@@ -225,7 +335,11 @@ public class MyLinkedListTest {
         list.set(2, 777);
         // [777, 1, 777, 3, 4, -99]
 
-        assertListContent(list, 777, 1, 777, 3, 4, -99);
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(777, 1, 777, 3, 4, -99)
+        );
+        Assertions.assertEquals(expectedMyList, list);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> list.set(6, 111));
     }
@@ -236,7 +350,11 @@ public class MyLinkedListTest {
         Assertions.assertEquals(1, list.length());
 
         list.set(0, "aaa");
-        assertListContent(list, "aaa");
+
+        MyList<String> expectedMyList = new MyArrayList<>(
+                List.of("aaa")
+        );
+        Assertions.assertEquals(expectedMyList, list);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> list.set(1, "bbb"));
@@ -257,7 +375,11 @@ public class MyLinkedListTest {
         MyList<Integer> list = new MyLinkedList<>();
         list.addAll(List.of(0, 1, 2, 3));
 
-        assertListContent(list, 0, 1, 2, 3);
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(0, 1, 2, 3)
+        );
+        Assertions.assertEquals(expectedMyList, list);
+
         Assertions.assertEquals(4, list.length());
     }
 
@@ -266,29 +388,45 @@ public class MyLinkedListTest {
         MyList<Integer> list = new MyLinkedList<>();
         list.addAll(List.of(0));
 
-        assertListContent(list, 0);
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(0)
+        );
+        Assertions.assertEquals(expectedMyList, list);
+
         Assertions.assertEquals(1, list.length());
 
         list.add(999);
-        assertListContent(list, 0, 999);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(0, 999)
+        );
+        Assertions.assertEquals(expectedMyList, list);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> list.get(2));
     }
 
     @Test
     void addAll_addToEmptyList() {
-        MyList<Integer> list = new MyLinkedList<>();
-        list.addAll(List.of());
+        MyList<Integer> emptyList = new MyLinkedList<>();
+        emptyList.addAll(List.of());
 
-        assertListContent(list);
-        Assertions.assertEquals(0, list.length());
-        Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> list.get(0));
+        MyList<Integer> expectedMyList = new MyArrayList<>();
+        Assertions.assertEquals(expectedMyList, emptyList);
 
-        list.add(0, 777);
-        assertListContent(list, 777);
+        Assertions.assertEquals(0, emptyList.length());
         Assertions.assertThrows(IndexOutOfBoundsException.class,
-                () -> list.get(1));
+                () -> emptyList.get(0));
+
+        emptyList.add(0, 777);
+
+        expectedMyList = new MyArrayList<>(
+                List.of(777)
+        );
+        Assertions.assertEquals(expectedMyList, emptyList);
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class,
+                () -> emptyList.get(1));
     }
 
 
@@ -298,12 +436,19 @@ public class MyLinkedListTest {
         bigList.addAll(List.of(1, 3, 0, 1, 2, 9, -1));
 
         MyList.bubbleSort(bigList);
-        assertListContent(bigList, -1, 0, 1, 1, 2, 3, 9);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(-1, 0, 1, 1, 2, 3, 9)
+        );
+        Assertions.assertEquals(expectedMyList, bigList);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> bigList.get(7));
 
         MyList.bubbleSort(bigList);
-        assertListContent(bigList, -1, 0, 1, 1, 2, 3, 9);
+
+        Assertions.assertEquals(expectedMyList, bigList);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> bigList.get(7));
     }
@@ -314,12 +459,19 @@ public class MyLinkedListTest {
         smallList.addAll(List.of(9));
 
         MyList.bubbleSort(smallList);
-        assertListContent(smallList, 9);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(9)
+        );
+        Assertions.assertEquals(expectedMyList, smallList);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> smallList.get(1));
 
         MyList.bubbleSort(smallList);
-        assertListContent(smallList, 9);
+
+        Assertions.assertEquals(expectedMyList, smallList);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> smallList.get(1));
     }
@@ -329,12 +481,17 @@ public class MyLinkedListTest {
         MyList<Integer> emptyList = new MyLinkedList<>();
 
         MyList.bubbleSort(emptyList);
-        assertListContent(emptyList);
+
+        MyList<Integer> expectedMyList = new MyArrayList<>();
+        Assertions.assertEquals(expectedMyList, emptyList);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> emptyList.get(0));
 
         MyList.bubbleSort(emptyList);
-        assertListContent(emptyList);
+
+        Assertions.assertEquals(expectedMyList, emptyList);
+
         Assertions.assertThrows(IndexOutOfBoundsException.class,
                 () -> emptyList.get(0));
     }
@@ -503,7 +660,10 @@ public class MyLinkedListTest {
                 break;
             }
         }
-        assertListContent(result, 1, 2, 3, 4, 4, 3, 2, 1, 0);
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(1, 2, 3, 4, 4, 3, 2, 1, 0)
+        );
+        Assertions.assertEquals(expectedMyList, result);
     }
 
 
@@ -622,7 +782,10 @@ public class MyLinkedListTest {
         for (Integer i : list) {
             result.add(i);
         }
-        assertListContent(result, -2, -1, 2, 3, 9);
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(-2, -1, 2, 3, 9)
+        );
+        Assertions.assertEquals(expectedMyList, result);
     }
 
     @Test
@@ -640,7 +803,10 @@ public class MyLinkedListTest {
         for (Integer i : list) {
             result.add(i);
         }
-        assertListContent(result, 99);
+        MyList<Integer> expectedMyList = new MyArrayList<>(
+                List.of(99)
+        );
+        Assertions.assertEquals(expectedMyList, result);
     }
 
     @Test

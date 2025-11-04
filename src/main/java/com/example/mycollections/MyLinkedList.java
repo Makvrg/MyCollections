@@ -341,4 +341,63 @@ public class MyLinkedList<E> implements MyList<E> {
 
     }
 
+
+    private boolean equalsRange(MyList<?> list) {
+        if (size != list.length()) {
+            return false;
+        }
+        Iterator<?> selfIt = this.iterator();
+        Iterator<?> listIt = list.iterator();
+        while (selfIt.hasNext() && listIt.hasNext()) {
+            if (!Objects.equals(selfIt.next(), listIt.next())) {
+                return false;
+            }
+        }
+        if (size != list.length()) {
+            return false;
+        }
+        return !selfIt.hasNext() && !listIt.hasNext();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null) {
+            return false;
+        }
+        if (!(object instanceof MyList<?> that)) {
+            return false;
+        }
+        return equalsRange(that);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(size);
+        for (Object object : this) {
+            result = 31 * result + Objects.hashCode(object);
+        }
+        return Objects.hashCode(size);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("MyLinkedList{[");
+
+        MyNode<E> current = first;
+        for (int i = 0; i < size; i++) {
+            sb.append(current.item);
+            if (i < size - 1) {
+                sb.append(", ");
+            }
+            current = current.next;
+        }
+
+        sb.append("]}");
+        return sb.toString();
+    }
+
 }
