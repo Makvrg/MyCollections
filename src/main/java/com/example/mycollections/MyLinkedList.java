@@ -1,14 +1,13 @@
 package com.example.mycollections;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 public class MyLinkedList<E> implements MyList<E> {
 
     private MyNode<E> first;
     private MyNode<E> last;
     private int size;
+    private int modCount;
 
     public MyLinkedList() {}
 
@@ -16,6 +15,7 @@ public class MyLinkedList<E> implements MyList<E> {
         addAll(collection);
     }
 
+    @Override
     public void add(E e) {
         MyNode<E> newMyNode;
         if (last == null) {
@@ -27,12 +27,14 @@ public class MyLinkedList<E> implements MyList<E> {
         }
         last = newMyNode;
         size++;
+        modCount++;
     }
 
+    @Override
     public void add(int index, E e) {
         Objects.checkIndex(index, size + 1);
 
-        if (size == 0) {
+        if (index == size) {
             add(e);
             return;
         }
@@ -42,11 +44,7 @@ public class MyLinkedList<E> implements MyList<E> {
             first.prev = newMyNode;
             first = newMyNode;
             size++;
-            return;
-        }
-
-        if (index == size) {
-            add(e);
+            modCount++;
             return;
         }
 
@@ -62,8 +60,10 @@ public class MyLinkedList<E> implements MyList<E> {
         currentMyNode = newMyNode.next;
         currentMyNode.prev = newMyNode;
         size++;
+        modCount++;
     }
 
+    @Override
     public E get(int index) {
         Objects.checkIndex(index, size);
 
@@ -82,6 +82,7 @@ public class MyLinkedList<E> implements MyList<E> {
         }
     }
 
+    @Override
     public E remove(int index) {
         Objects.checkIndex(index, size);
 
@@ -91,6 +92,7 @@ public class MyLinkedList<E> implements MyList<E> {
             last = null;
 
             size--;
+            modCount++;
             return removedElement;
         }
 
@@ -100,6 +102,7 @@ public class MyLinkedList<E> implements MyList<E> {
             first.prev = null;
 
             size--;
+            modCount++;
             return removedElement;
         }
 
@@ -109,6 +112,7 @@ public class MyLinkedList<E> implements MyList<E> {
             last.next = null;
 
             size--;
+            modCount++;
             return removedElement;
         }
 
@@ -123,15 +127,18 @@ public class MyLinkedList<E> implements MyList<E> {
         currentMyNode.next = currentMyNode.next.next;
         currentMyNode.next.prev = currentMyNode;
         size--;
+        modCount++;
         return removedElement;
     }
 
+    @Override
     public void addAll(Collection<? extends E> collection) {
         for (E e : collection) {
             add(e);
         }
     }
 
+    @Override
     public void set(int index, E e) {
         Objects.checkIndex(index, size);
 
@@ -152,6 +159,7 @@ public class MyLinkedList<E> implements MyList<E> {
         }
     }
 
+    @Override
     public int length() {
         return size;
     }
@@ -172,14 +180,6 @@ public class MyLinkedList<E> implements MyList<E> {
         return currentMyNode;
     }
 
-    @Override
-    public Iterator<E> iterator() {
-        return new myLinkedListIterator();
-    }
-
-//    public Iterator<E> reverseIterator() {
-//        return new reverseMyLinkedListIterator();
-//    }
 
     private static class MyNode<E> {
         MyNode<E> prev;
@@ -194,50 +194,210 @@ public class MyLinkedList<E> implements MyList<E> {
 
     }
 
-    private class myLinkedListIterator implements Iterator<E> {
 
-        private MyNode<E> currentMyNode;
-        private int currentIndex;
+    @Override
+    public Iterator<E> iterator() {
+        return new Itr();
+    }
+
+    private class Itr implements Iterator<E> {
+
+        MyNode<E> currentMyNode = first;
+        int cursor;
+        MyNode<E> lastReturned;
+        int indexOfLastReturned = -1;
+        int expectedModCount = modCount;
 
         @Override
         public boolean hasNext() {
-            return currentIndex < size;
+            return cursor < size;
         }
 
         @Override
         public E next() {
-            if (currentIndex == 0) {
+            if (cursor == 0) {
                 currentMyNode = first;
             } else {
                 currentMyNode = currentMyNode.next;
             }
-            currentIndex++;
+            indexOfLastReturned = cursor;
+            cursor++;
+            lastReturned = currentMyNode;
             return currentMyNode.item;
+        }
+
+        @Override
+        public void remove() {
+            if (lastReturned == null) {
+                throw new IllegalStateException();
+            }
+            checkForModification();
+            currentMyNode = lastReturned.prev;
+            if (size == 1) {
+                first = null;
+                last = null;
+            } else if (lastReturned.prev == null) {
+                first = first.next;
+                lastReturned.next.prev = null;
+            } else if (lastReturned.next == null) {
+                last = last.prev;
+                lastReturned.prev.next = null;
+            } else {
+                lastReturned.prev.next = lastReturned.next;
+                lastReturned.next.prev = lastReturned.prev;
+            }
+            size--;
+            modCount++;
+            cursor = indexOfLastReturned;
+            lastReturned = null;
+            indexOfLastReturned = -1;
+            expectedModCount = modCount;
+        }
+
+        final void checkForModification() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
         }
 
     }
 
-//    private class reverseMyLinkedListIterator implements Iterator<E> {
-//
-//        private MyNode<E> currentMyNode;
-//        private int currentIndex = size - 1;
-//
-//        @Override
-//        public boolean hasNext() {
-//            return currentIndex > 0;
-//        }
-//
-//        @Override
-//        public E next() {
-//            if (currentIndex == size - 1) {
-//                currentMyNode = last;
-//            } else {
-//                currentMyNode = currentMyNode.prev;
-//            }
-//            currentIndex--;
-//            return currentMyNode.item;
-//        }
-//
-//    }
+
+    @Override
+    public ListIterator<E> listIterator(Integer index) {
+        return new ListItr(index);
+    }
+
+    private class ListItr extends Itr implements ListIterator<E> {
+
+        ListItr(int index) {
+            super();
+            cursor = index;
+            if (index != 0) {
+                currentMyNode = getMyNode(index - 1);
+            }
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            checkForModification();
+            return cursor > 0;
+        }
+
+        @Override
+        public E previous() {
+            indexOfLastReturned = cursor - 1;
+            cursor--;
+            lastReturned = currentMyNode;
+            currentMyNode = currentMyNode.prev;
+            return lastReturned.item;
+        }
+
+        @Override
+        public int nextIndex() {
+            return cursor;
+        }
+
+        @Override
+        public int previousIndex() {
+            return cursor - 1;
+        }
+
+        @Override
+        public void set(E e) {
+            if (lastReturned == null)
+                throw new IllegalStateException();
+            checkForModification();
+            lastReturned.item = e;
+        }
+
+        @Override
+        public void add(E e) {
+            checkForModification();
+            if (cursor == size) {
+                MyLinkedList.this.add(e);
+                currentMyNode = last;
+            } else if (cursor == 0) {
+                MyNode<E> newMyNode = new MyNode<>(null, e, first);
+                first.prev = newMyNode;
+                first = newMyNode;
+                currentMyNode = first;
+                size++;
+                modCount++;
+            } else {
+                MyNode<E> newMyNode = new MyNode<>(currentMyNode, e,
+                                                   currentMyNode.next);
+                currentMyNode.next = newMyNode;
+                currentMyNode.next.next.prev = newMyNode;
+                currentMyNode = newMyNode;
+                size++;
+                modCount++;
+            }
+            cursor++;
+            lastReturned = null;
+            indexOfLastReturned = -1;
+            expectedModCount = modCount;
+        }
+
+    }
+
+
+    private boolean equalsRange(MyList<?> list) {
+        if (size != list.length()) {
+            return false;
+        }
+        Iterator<?> selfIt = this.iterator();
+        Iterator<?> listIt = list.iterator();
+        while (selfIt.hasNext() && listIt.hasNext()) {
+            if (!Objects.equals(selfIt.next(), listIt.next())) {
+                return false;
+            }
+        }
+        if (size != list.length()) {
+            return false;
+        }
+        return !selfIt.hasNext() && !listIt.hasNext();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null) {
+            return false;
+        }
+        if (!(object instanceof MyList<?> that)) {
+            return false;
+        }
+        return equalsRange(that);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(size);
+        for (E object : this) {
+            result = 31 * result + Objects.hashCode(object);
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("MyLinkedList{[");
+
+        MyNode<E> current = first;
+        for (int i = 0; i < size; i++) {
+            sb.append(current.item);
+            if (i < size - 1) {
+                sb.append(", ");
+            }
+            current = current.next;
+        }
+
+        sb.append("]}");
+        return sb.toString();
+    }
 
 }

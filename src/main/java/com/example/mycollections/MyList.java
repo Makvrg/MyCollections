@@ -1,6 +1,7 @@
 package com.example.mycollections;
 
 import java.util.Collection;
+import java.util.ListIterator;
 
 public interface MyList<E> extends Iterable<E> {
 
@@ -35,5 +36,7 @@ public interface MyList<E> extends Iterable<E> {
             }
         }
     }
+
+    ListIterator<E> listIterator(Integer index);
 
 }
