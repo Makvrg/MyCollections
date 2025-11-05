@@ -247,7 +247,9 @@ public class MyArrayList<E> implements MyList<E> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(size, Arrays.hashCode(elementData));
+        Object[] subElementData = new Object[size];
+        System.arraycopy(elementData, 0, subElementData, 0, size);
+        return Objects.hash(size, Arrays.hashCode(subElementData));
     }
 
     @Override

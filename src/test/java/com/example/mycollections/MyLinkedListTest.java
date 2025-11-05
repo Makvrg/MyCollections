@@ -5,10 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class MyLinkedListTest {
 
@@ -51,6 +48,97 @@ public class MyLinkedListTest {
 
         Assertions.assertEquals(expectedIntegers, emptyIntegersList.toString());
         Assertions.assertEquals(expectedStrings, emptyStringsList.toString());
+    }
+
+
+    @Test
+    void equals_listsIsEqual() {
+        MyList<Integer> myLinkedList1 = new MyLinkedList<>();
+        MyList<Integer> myLinkedList2 = new MyLinkedList<>();
+
+        MyList<Integer> myArrayList = new MyArrayList<>();
+
+        Assertions.assertEquals(myLinkedList1, myLinkedList1);
+        Assertions.assertEquals(myLinkedList2, myLinkedList2);
+
+        Assertions.assertEquals(myLinkedList1, myLinkedList2);
+        Assertions.assertEquals(myLinkedList2, myLinkedList1);
+
+        Assertions.assertEquals(myLinkedList1, myArrayList);
+        Assertions.assertEquals(myLinkedList2, myArrayList);
+
+        myLinkedList1.add(1);
+        myLinkedList2.add(1);
+        myArrayList.add(1);
+
+        Assertions.assertEquals(myLinkedList1, myLinkedList2);
+        Assertions.assertEquals(myLinkedList2, myLinkedList1);
+
+        Assertions.assertEquals(myLinkedList1, myArrayList);
+        Assertions.assertEquals(myLinkedList2, myArrayList);
+
+        myLinkedList1.addAll(List.of(999, 888));
+        myLinkedList1.remove(1);
+        myLinkedList2.addAll(List.of(999, 888));
+        myLinkedList2.remove(1);
+        myArrayList.addAll(List.of(999, 888));
+        myArrayList.remove(1);
+
+        Assertions.assertEquals(myLinkedList1, myLinkedList2);
+        Assertions.assertEquals(myLinkedList2, myLinkedList1);
+
+        Assertions.assertEquals(myLinkedList1, myArrayList);
+        Assertions.assertEquals(myLinkedList2, myArrayList);
+    }
+
+    @Test
+    void equals_listsIsNotEqual() {
+        MyList<Integer> myLinkedList1 = new MyLinkedList<>(List.of(-1));
+        MyList<Integer> myLinkedList2 = new MyLinkedList<>();
+
+        MyList<Integer> myArrayList = new MyArrayList<>();
+
+        Integer num = -1;
+
+        Assertions.assertNotEquals(myLinkedList1, num);
+        Assertions.assertNotEquals(myLinkedList2, num);
+        Assertions.assertNotEquals(myLinkedList1, myLinkedList2);
+        Assertions.assertNotEquals(myLinkedList2, myLinkedList1);
+        Assertions.assertNotEquals(myLinkedList1, myArrayList);
+
+        myLinkedList2.add(1);
+
+        Assertions.assertNotEquals(myLinkedList1, myLinkedList2);
+        Assertions.assertNotEquals(myLinkedList2, myLinkedList1);
+
+        myLinkedList1 = null;
+
+        Assertions.assertNotEquals(myLinkedList1, myLinkedList2);
+        Assertions.assertNotEquals(myLinkedList2, myLinkedList1);
+    }
+
+
+    @Test
+    void hashCode_calculateHashCode() {
+        MyList<Integer> myLinkedList1 = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
+        MyList<Integer> myLinkedList2 = new MyLinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
+        MyList<Integer> myLinkedList3 = new MyLinkedList<>(List.of(-1, 1, 2, -3, 4, 5));
+
+        List<Integer> listImposter = new LinkedList<>(List.of(-1, 1, 2, 3, 4, 5));
+
+        int hash1 = myLinkedList1.hashCode();
+        int hash2 = myLinkedList2.hashCode();
+        int hash3 = myLinkedList3.hashCode();
+
+        int hashImposter = listImposter.hashCode();
+
+        Assertions.assertNotEquals(hash1, hash3);
+        Assertions.assertNotEquals(hash2, hash3);
+
+        Assertions.assertNotEquals(hash1, hashImposter);
+        Assertions.assertNotEquals(hash2, hashImposter);
+        Assertions.assertNotEquals(hash3, hashImposter);
+
     }
 
 

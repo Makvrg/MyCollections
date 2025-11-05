@@ -376,10 +376,10 @@ public class MyLinkedList<E> implements MyList<E> {
     @Override
     public int hashCode() {
         int result = Objects.hash(size);
-        for (Object object : this) {
+        for (E object : this) {
             result = 31 * result + Objects.hashCode(object);
         }
-        return Objects.hashCode(size);
+        return result;
     }
 
     @Override

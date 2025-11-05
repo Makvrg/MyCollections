@@ -51,6 +51,96 @@ public class MyArrayListTest {
     }
 
 
+    @Test
+    void equals_listsIsEqual() {
+        MyList<Integer> myArrayList1 = new MyArrayList<>(60);
+        MyList<Integer> myArrayList2 = new MyArrayList<>(0);
+        MyList<Integer> myLinkedList = new MyLinkedList<>();
+
+        Assertions.assertEquals(myArrayList1, myArrayList1);
+        Assertions.assertEquals(myArrayList2, myArrayList2);
+
+        Assertions.assertEquals(myArrayList1, myArrayList2);
+        Assertions.assertEquals(myArrayList2, myArrayList1);
+
+        Assertions.assertEquals(myArrayList1, myLinkedList);
+        Assertions.assertEquals(myArrayList2, myLinkedList);
+
+        myArrayList1.add(1);
+        myArrayList2.add(1);
+        myLinkedList.add(1);
+
+        Assertions.assertEquals(myArrayList1, myArrayList2);
+        Assertions.assertEquals(myArrayList2, myArrayList1);
+
+        Assertions.assertEquals(myArrayList1, myLinkedList);
+        Assertions.assertEquals(myArrayList2, myLinkedList);
+
+        myArrayList1.addAll(List.of(999, 888));
+        myArrayList1.remove(1);
+        myArrayList2.addAll(List.of(999, 888));
+        myArrayList2.remove(1);
+        myLinkedList.addAll(List.of(999, 888));
+        myLinkedList.remove(1);
+
+        Assertions.assertEquals(myArrayList1, myArrayList2);
+        Assertions.assertEquals(myArrayList2, myArrayList1);
+
+        Assertions.assertEquals(myArrayList1, myLinkedList);
+        Assertions.assertEquals(myArrayList2, myLinkedList);
+    }
+
+    @Test
+    void equals_listsIsNotEqual() {
+        MyList<Integer> myArrayList1 = new MyArrayList<>(List.of(-1), 60);
+        MyList<Integer> myArrayList2 = new MyArrayList<>(3);
+
+        MyList<Integer> myLinkedList = new MyLinkedList<>();
+
+        Integer num = -1;
+
+        Assertions.assertNotEquals(myArrayList1, num);
+        Assertions.assertNotEquals(myArrayList2, num);
+        Assertions.assertNotEquals(myArrayList1, myArrayList2);
+        Assertions.assertNotEquals(myArrayList2, myArrayList1);
+        Assertions.assertNotEquals(myArrayList1, myLinkedList);
+
+        myArrayList2.add(1);
+
+        Assertions.assertNotEquals(myArrayList1, myArrayList2);
+        Assertions.assertNotEquals(myArrayList2, myArrayList1);
+
+        myArrayList1 = null;
+
+        Assertions.assertNotEquals(myArrayList1, myArrayList2);
+        Assertions.assertNotEquals(myArrayList2, myArrayList1);
+    }
+
+
+    @Test
+    void hashCode_calculateHashCode() {
+        MyList<Integer> myArrayList1 = new MyArrayList<>(List.of(-1, 1, 2, 3, 4, 5), 56);
+        MyList<Integer> myArrayList2 = new MyArrayList<>(List.of(-1, 1, 2, 3, 4, 5), 78);
+        MyList<Integer> myArrayList3 = new MyArrayList<>(List.of(-1, 1, 2, -3, 4, 5), 2);
+
+        List<Integer> listImposter = new ArrayList<>(List.of(-1, 1, 2, 3, 4, 5));
+
+        int arrayHash1 = myArrayList1.hashCode();
+        int arrayHash2 = myArrayList2.hashCode();
+        int arrayHash3 = myArrayList3.hashCode();
+
+        int hashImposter = listImposter.hashCode();
+
+        Assertions.assertNotEquals(arrayHash1, arrayHash3);
+        Assertions.assertNotEquals(arrayHash2, arrayHash3);
+
+        Assertions.assertNotEquals(arrayHash1, hashImposter);
+        Assertions.assertNotEquals(arrayHash2, hashImposter);
+        Assertions.assertNotEquals(arrayHash3, hashImposter);
+
+    }
+
+
     @ParameterizedTest
     @CsvFileSource(resources = "/StringData.csv")
     void get_getElementsFromLists(String el1, String el2, String el3,
